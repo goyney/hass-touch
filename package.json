@@ -1,0 +1,21 @@
+{
+  "name": "hass-touch",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "home-assistant-js-websocket": "^1.1.2",
+    "mdi": "^2.0.46",
+    "moment": "^2.19.3",
+    "moment-business-days": "^1.0.6",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-moment": "^0.6.8",
+    "react-scripts": "1.0.17"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
