@@ -1,6 +1,15 @@
-$primary-color: #245;
-$white: #f00;
+// Colors
+$white: #eee;
+$black: #000;
+$blue: #2a97c1;
+$green: #2ac17b;
+$red: #ff4545;
+$grey: #3c3c3c;
 
-$shadow-color: #666;
+$primary-color: $blue;
+$background-color: $grey;
+$text-color: $white;
 
-$border-radius: 4px;
+// Measurements
+$screen-height: 480px;
+$sidebar-width: 100px;

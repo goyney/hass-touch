@@ -1,11 +1,15 @@
 import React from 'react';
-import Moment from 'react-moment';
 import { createConnection, subscribeEntities } from 'home-assistant-js-websocket';
+import { Container, Segment, Sidebar } from 'semantic-ui-react';
+
 import config from './config.json';
 
+import ControlPanel from './ControlPanel/ControlPanel';
 import Presence from './Presence/Presence';
 import Lights from './Lights/Lights';
 
+import '../node_modules/mdi/css/materialdesignicons.min.css';
+import '../node_modules/semantic-ui-css/semantic.min.css';
 import '../style/main.scss';
 
 export default class App extends React.Component {
@@ -59,35 +63,30 @@ export default class App extends React.Component {
   }
 
   render() {
-    let lastUpdate;
-
-    if (this.state.hass.lastUpdate) {
-      lastUpdate = <p>Last Updated: <Moment date={this.state.hass.lastUpdate} /></p>;
-    }
-
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Home Assistant</h1>
-          <p>Connection to Home Assistant: {this.state.hass.connection ? 'Connected' : 'Disconnected'}</p>
-          <p>There are {Object.keys(this.state.hass.entities).length} subscribed event groups.</p>
-        </header>
-        <Presence
-          devices={this.state.hass.entities.device_tracker}
-          binarySensors={this.state.hass.entities.binary_sensor}
-          sensors={this.state.hass.entities.sensor}
-        />
-        <hr />
-        <Lights
-          connection={this.state.hass.connection}
-          groups={this.state.hass.entities.group}
-          lights={this.state.hass.entities.light}
-          fans={this.state.hass.entities.fan}
-          switches={this.state.hass.entities.switch}
-        />
-        <hr />
-        {lastUpdate}
-      </div>
+      <Sidebar.Pushable>
+        <ControlPanel />
+        <Sidebar.Pusher as={Container.fluid}>
+          <header>
+            <h1>Home Assistant</h1>
+            <p>Connection to Home Assistant: {this.state.hass.connection ? 'Connected' : 'Disconnected'}</p>
+            <p>There are {Object.keys(this.state.hass.entities).length} subscribed event groups.</p>
+          </header>
+          <Presence
+            devices={this.state.hass.entities.device_tracker}
+            binarySensors={this.state.hass.entities.binary_sensor}
+            sensors={this.state.hass.entities.sensor}
+          />
+          <hr />
+          <Lights
+            connection={this.state.hass.connection}
+            groups={this.state.hass.entities.group}
+            lights={this.state.hass.entities.light}
+            fans={this.state.hass.entities.fan}
+            switches={this.state.hass.entities.switch}
+          />
+        </Sidebar.Pusher>
+      </Sidebar.Pushable>
     );
   }
 }

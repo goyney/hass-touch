@@ -1,0 +1,29 @@
+@import '../../style/variables';
+
+#control-panel {
+  background-color: $grey;
+  height: $screen-height !important;
+  overflow: hidden;
+  width: $sidebar-width;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .item {
+    font-weight: 300;
+    height: 120px;
+    padding: 24px;
+    text-align: center;
+    width: $sidebar-width;
+
+    i {
+      display: block;
+      font-size: 3rem !important;
+    }
+
+    &.active {
+      background-color: $blue;
+    }
+  }
+}
