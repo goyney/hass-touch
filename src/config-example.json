@@ -1,0 +1,7 @@
+{
+  "hass": {
+    "basePath": "yourserver.com",
+    "apiKey": "YourPassword",
+    "ssl": true
+  }
+}
