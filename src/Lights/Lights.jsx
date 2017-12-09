@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'semantic-ui-react';
 
 import './Lights.scss';
 
@@ -34,7 +35,7 @@ export default class Lights extends React.Component {
         const switchSplit = switcher.split('.', 2);
         if (switches[switchSplit[1]]) {
           const thisSwitch = switches[switchSplit[1]];
-          return <p key={thisSwitch.entity_id}>{thisSwitch.attributes.friendly_name} | {thisSwitch.state} | <a onClick={this._toggle(thisSwitch.entity_id)}>Toggle</a></p>;
+          return <p key={thisSwitch.entity_id}>{thisSwitch.attributes.friendly_name} | {thisSwitch.state} | <Button onClick={this._toggle(thisSwitch.entity_id)}>Toggle</Button></p>;
         }
         return false;
       });
@@ -43,7 +44,7 @@ export default class Lights extends React.Component {
       if (group.entity_id !== 'group.master_bedroom') {
         return (
           <div key={group.entity_id}>
-            <h4>{group.attributes.friendly_name} | {group.state} | <a onClick={this._toggle(group.entity_id)}>Toggle</a></h4>
+            <h4>{group.attributes.friendly_name} | {group.state} | <Button onClick={this._toggle(group.entity_id)}>Toggle</Button></h4>
             {groupSwitches}
           </div>
         );
