@@ -101,12 +101,12 @@ export default class Presence extends React.Component {
         <p>
           <img src={this.state.mike.icon} alt={this.state.mike.name} style={{ width: '32px', height: '32px'}} />
           {this.state.mike.name}: {this.state.mike.state} {this.state.mike.status}
-          <i className={`mdi-battery${this.state.mike.battery}`} />
+          <i className={`mdi mdi-battery${this.state.mike.battery}`} />
         </p>
         <p>
           <img src={this.state.lauren.icon} alt={this.state.lauren.name} style={{ width: '32px', height: '32px'}} />
           {this.state.lauren.name}: {this.state.lauren.state} {this.state.lauren.status}
-          <i className={`mdi-battery${this.state.lauren.battery}`} />
+          <i className={`mdi mdi-battery${this.state.lauren.battery}`} />
         </p>
       </div>
     );
