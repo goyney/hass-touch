@@ -11,6 +11,7 @@
     "build": "parcel build ./public/index.html"
   },
   "devDependencies": {
+    "babel-plugin-module-resolver": "^3.0.0",
     "babel-preset-react-app": "^3.1.0",
     "home-assistant-js-websocket": "^1.1.2",
     "mdi": "^2.0.46",

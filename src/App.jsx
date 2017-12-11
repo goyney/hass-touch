@@ -8,9 +8,9 @@ import ControlPanel from './ControlPanel/ControlPanel';
 import Presence from './Presence/Presence';
 import Lights from './Lights/Lights';
 
-import '../node_modules/mdi/css/materialdesignicons.min.css';
-import '../node_modules/semantic-ui-css/semantic.min.css';
-import '../style/main.scss';
+import 'mdi/css/materialdesignicons.min.css';
+import 'semantic-ui-css/semantic.min.css';
+import 'style/main.scss';
 
 export default class App extends React.Component {
   constructor() {

@@ -41,6 +41,7 @@ export default class Presence extends React.Component {
 
   _updateFamilyStatus(family = {}) {
     Object.keys(family).forEach(member => {
+      console.log(member, family[member]);
       let status, state;
       if (family[member].device.state !== 'home') {
         state = 'out';
