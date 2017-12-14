@@ -66,7 +66,7 @@ export default class Lights extends React.Component {
       });
   }
 
-  render () {
+  render() {
     const {
       groups = {},
       switches = {},

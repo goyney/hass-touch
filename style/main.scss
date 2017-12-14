@@ -8,4 +8,24 @@ html, body {
 body {
   background-color: $black;
   color: $white;
+
+  &::after {
+    background: {
+      image: url('../public/images/mountains.png');
+      position: center;
+    }
+    bottom: 0;
+    content: "";
+    left: 0;
+    opacity: .4;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -1;
+  }
+}
+
+#root {
+  height: 100%;
+  width: 100%;
 }

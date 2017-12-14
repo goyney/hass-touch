@@ -1,12 +1,18 @@
 import React from 'react';
 import { createConnection, subscribeEntities } from 'home-assistant-js-websocket';
-import { Container, Segment, Sidebar } from 'semantic-ui-react';
+import { Container, Sidebar } from 'semantic-ui-react';
 
 import config from './config.json';
 
 import ControlPanel from './ControlPanel/ControlPanel';
-import Presence from './Presence/Presence';
+import Home from './Home/Home';
+import Alarm from './Alarm/Alarm';
+import Climate from './Climate/Climate';
+import Garage from './Garage/Garage';
+import Irrigation from './Irrigation/Irrigation';
 import Lights from './Lights/Lights';
+
+import Presence from './Presence/Presence';
 
 import 'mdi/css/materialdesignicons.min.css';
 import 'semantic-ui-css/semantic.min.css';
@@ -67,7 +73,8 @@ export default class App extends React.Component {
       <Sidebar.Pushable>
         <ControlPanel />
         <Sidebar.Pusher as={Container.fluid}>
-          <header>
+          <Home />
+          {/* <header>
             <h1>Home Assistant</h1>
             <p>Connection to Home Assistant: {this.state.hass.connection ? 'Connected' : 'Disconnected'}</p>
             <p>There are {Object.keys(this.state.hass.entities).length} subscribed event groups.</p>
@@ -84,7 +91,7 @@ export default class App extends React.Component {
             lights={this.state.hass.entities.light}
             fans={this.state.hass.entities.fan}
             switches={this.state.hass.entities.switch}
-          />
+          /> */}
         </Sidebar.Pusher>
       </Sidebar.Pushable>
     );

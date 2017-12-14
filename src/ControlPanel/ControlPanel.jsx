@@ -3,8 +3,63 @@ import { Sidebar, Menu } from 'semantic-ui-react';
 
 import './ControlPanel.scss';
 
+const menuItems = [
+  {
+    id: 'home',
+    name: 'Home',
+    icon: 'home'
+  },
+  {
+    id: 'alarm',
+    name: 'Alarm',
+    icon: 'dialpad'
+  },
+  {
+    id: 'climate',
+    name: 'Climate',
+    icon: 'nest-thermostat'
+  },
+  {
+    id: 'lights',
+    name: 'Lights',
+    icon: 'lightbulb'
+  },
+  {
+    id: 'garage',
+    name: 'Garage',
+    icon: 'garage'
+  },
+  {
+    id: 'irrigation',
+    name: 'Irrigation',
+    icon: 'water-pump'
+  }
+];
+
 export default class ControlPanel extends React.Component {
-  render () {
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeItem: 'home'
+    };
+  }
+
+  _switchPage = (e, { name }) => this.setState({ activeItem: name });
+
+  render() {
+    const menu = menuItems.map(item => {
+      return (
+        <Menu.Item
+          name={item.id}
+          active={this.state.activeItem === item.id}
+          onClick={this._switchPage}
+        >
+          <i className={`icon mdi mdi-${item.icon}`} />
+          {item.name}
+        </Menu.Item>
+      );
+    });
+
     return (
       <Sidebar
         as={Menu}
@@ -15,32 +70,8 @@ export default class ControlPanel extends React.Component {
         inverted
         vertical
         visible
-        widths='7'
       >
-        <Menu.Item name='home' active>
-          <i className='icon mdi mdi-home' />
-          Home
-        </Menu.Item>
-        <Menu.Item name='alarm'>
-          <i className='icon mdi mdi-dialpad' />
-          Alarm
-        </Menu.Item>
-        <Menu.Item name='climate'>
-          <i className='icon mdi mdi-nest-thermostat' />
-          Climate
-        </Menu.Item>
-        <Menu.Item name='lights'>
-          <i className='icon mdi mdi-lightbulb' />
-          Lights
-        </Menu.Item>
-        <Menu.Item name='garage'>
-          <i className='icon mdi mdi-garage' />
-          Garage
-        </Menu.Item>
-        <Menu.Item name='irrigation'>
-          <i className='icon mdi mdi-water-pump' />
-          Irrigation
-        </Menu.Item>
+        {menu}
       </Sidebar>
     );
   }
