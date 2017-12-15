@@ -3936,6 +3936,10 @@ sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
 
+squeeze-js@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/squeeze-js/-/squeeze-js-1.0.3.tgz#372a3b4f6666ee433b7e8848fe68fd2e0d76cde9"
+
 sshpk@^1.7.0:
   version "1.13.1"
   resolved "https://registry.yarnpkg.com/sshpk/-/sshpk-1.13.1.tgz#512df6da6287144316dc4c18fe1cf1d940739be3"

@@ -41,7 +41,6 @@ export default class Presence extends React.Component {
 
   _updateFamilyStatus(family = {}) {
     Object.keys(family).forEach(member => {
-      console.log(member, family[member]);
       let status, state;
       if (family[member].device.state !== 'home') {
         state = 'out';
@@ -91,24 +90,21 @@ export default class Presence extends React.Component {
     this._updateFamilyStatus(family);
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return true;
-  }
-
   render() {
     return (
-      <div>
-        <h3>Family Tracking</h3>
-        <p>
-          <img src={this.state.mike.icon} alt={this.state.mike.name} style={{ width: '32px', height: '32px'}} />
-          {this.state.mike.name}: {this.state.mike.state} {this.state.mike.status}
-          <i className={`mdi mdi-battery${this.state.mike.battery}`} />
-        </p>
-        <p>
-          <img src={this.state.lauren.icon} alt={this.state.lauren.name} style={{ width: '32px', height: '32px'}} />
-          {this.state.lauren.name}: {this.state.lauren.state} {this.state.lauren.status}
-          <i className={`mdi mdi-battery${this.state.lauren.battery}`} />
-        </p>
+      <div className='presence-container'>
+        <div>
+          <img src={this.state.mike.icon} alt={this.state.mike.name} />
+          <p className='presence-name'>{this.state.mike.name} <i className={`mdi mdi-battery${this.state.mike.battery}`} /></p>
+          <p className='presence-state'>{this.state.mike.state}</p>
+          <p className='presence-status'>{this.state.mike.status}</p>
+        </div>
+        <div>
+          <img src={this.state.lauren.icon} alt={this.state.lauren.name} />
+          <p className='presence-name'>{this.state.lauren.name} <i className={`mdi mdi-battery${this.state.lauren.battery}`} /></p>
+          <p className='presence-state'>{this.state.lauren.state}</p>
+          <p className='presence-status'>{this.state.lauren.status}</p>
+        </div>
       </div>
     );
   }

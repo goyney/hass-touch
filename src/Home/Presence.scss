@@ -1,0 +1,21 @@
+@import '../../style/variables';
+
+.presence-container {
+  border: 1px solid red;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  width: 100%;
+
+  img {
+    border-radius: 72px;
+    height: 72px;
+    width: 72px;
+  }
+
+  & > div {
+    flex: 1;
+    padding: 10px;
+  }
+}

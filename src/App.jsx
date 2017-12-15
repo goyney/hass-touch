@@ -12,8 +12,6 @@ import Garage from './Garage/Garage';
 import Irrigation from './Irrigation/Irrigation';
 import Lights from './Lights/Lights';
 
-import Presence from './Presence/Presence';
-
 import 'mdi/css/materialdesignicons.min.css';
 import 'semantic-ui-css/semantic.min.css';
 import 'style/main.scss';
@@ -78,7 +76,7 @@ export default class App extends React.Component {
     this.setState({ activePage: name });
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this._connectToHass();
   }
 
@@ -91,19 +89,13 @@ export default class App extends React.Component {
           activePage={this.state.activePage}
           changePage={this._changePage}
         />
-        <Sidebar.Pusher as={Container.fluid}>
-          <PageComponent />
+        <Sidebar.Pusher as={Container.fluid} className='information-panel'>
+          <PageComponent entities={this.state.hass.entities} />
           {/* <header>
             <h1>Home Assistant</h1>
             <p>Connection to Home Assistant: {this.state.hass.connection ? 'Connected' : 'Disconnected'}</p>
             <p>There are {Object.keys(this.state.hass.entities).length} subscribed event groups.</p>
           </header>
-          <Presence
-            devices={this.state.hass.entities.device_tracker}
-            binarySensors={this.state.hass.entities.binary_sensor}
-            sensors={this.state.hass.entities.sensor}
-          />
-          <hr />
           <Lights
             connection={this.state.hass.connection}
             groups={this.state.hass.entities.group}
