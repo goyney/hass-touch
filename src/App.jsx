@@ -18,6 +18,15 @@ import 'mdi/css/materialdesignicons.min.css';
 import 'semantic-ui-css/semantic.min.css';
 import 'style/main.scss';
 
+const pages = {
+  home: Home,
+  alarm: Alarm,
+  climate: Climate,
+  lights: Lights,
+  garage: Garage,
+  irrigation: Irrigation
+};
+
 export default class App extends React.Component {
   constructor() {
     super();
@@ -27,7 +36,8 @@ export default class App extends React.Component {
         error: false,
         lastUpdate: false,
         entities: {}
-      }
+      },
+      activePage: 'home'
     };
   }
 
@@ -64,16 +74,25 @@ export default class App extends React.Component {
       });
   }
 
+  _changePage = (e, { name }) => {
+    this.setState({ activePage: name });
+  };
+
   componentWillMount() {
     this._connectToHass();
   }
 
   render() {
+    const PageComponent = pages[this.state.activePage];
+
     return (
       <Sidebar.Pushable>
-        <ControlPanel />
+        <ControlPanel
+          activePage={this.state.activePage}
+          changePage={this._changePage}
+        />
         <Sidebar.Pusher as={Container.fluid}>
-          <Home />
+          <PageComponent />
           {/* <header>
             <h1>Home Assistant</h1>
             <p>Connection to Home Assistant: {this.state.hass.connection ? 'Connected' : 'Disconnected'}</p>

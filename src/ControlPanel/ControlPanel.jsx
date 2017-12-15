@@ -37,22 +37,16 @@ const menuItems = [
 ];
 
 export default class ControlPanel extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      activeItem: 'home'
-    };
-  }
-
-  _switchPage = (e, { name }) => this.setState({ activeItem: name });
-
   render() {
+    const { activePage, changePage } = this.props;
+
     const menu = menuItems.map(item => {
       return (
         <Menu.Item
+          key={item.id}
           name={item.id}
-          active={this.state.activeItem === item.id}
-          onClick={this._switchPage}
+          active={activePage === item.id}
+          onClick={changePage}
         >
           <i className={`icon mdi mdi-${item.icon}`} />
           {item.name}
