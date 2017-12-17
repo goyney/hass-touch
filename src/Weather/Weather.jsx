@@ -1,5 +1,5 @@
 import React from 'react';
-import squeeze from 'squeeze-js';
+import idx from 'idx';
 
 const icons = {
   'clear-day': 'sunny',
@@ -18,11 +18,11 @@ export default class Weather extends React.Component {
   render() {
     const { sensors } = this.props;
 
-    const icon = icons[squeeze(sensors, _ => _.dark_sky_icon.state)];
-    const currentTemp = Math.round(squeeze(sensors, _ => _.dark_sky_temperature.state));
-    const highTemp = Math.round(squeeze(sensors, _ => _.dark_sky_daily_high_temperature.state));
-    const lowTemp = Math.round(squeeze(sensors, _ => _.dark_sky_daily_low_temperature.state));
-    const precipChance = squeeze(sensors, _ => _.dark_sky_precip_probability.state);
+    const icon = icons[idx(sensors, _ => _.dark_sky_icon.state)];
+    const currentTemp = Math.round(idx(sensors, _ => _.dark_sky_temperature.state));
+    const highTemp = Math.round(idx(sensors, _ => _.dark_sky_daily_high_temperature.state));
+    const lowTemp = Math.round(idx(sensors, _ => _.dark_sky_daily_low_temperature.state));
+    const precipChance = idx(sensors, _ => _.dark_sky_precip_probability.state);
 
     return (
       <div>

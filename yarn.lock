@@ -1193,7 +1193,7 @@ combined-stream@^1.0.5, combined-stream@~1.0.5:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@^2.11.0, commander@^2.9.0, commander@~2.12.1:
+commander@^2.10.0, commander@^2.11.0, commander@^2.9.0, commander@~2.12.1:
   version "2.12.2"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.12.2.tgz#0f5946c427ed9ec0d91a46bb9def53e54650e555"
 
@@ -1471,6 +1471,13 @@ domutils@^1.5.1:
   dependencies:
     dom-serializer "0"
     domelementtype "1"
+
+dot-object@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/dot-object/-/dot-object-1.7.0.tgz#3b8ecda78b0f2aa52b8871c180fe1b3e09926a41"
+  dependencies:
+    commander "^2.10.0"
+    glob "^7.1.2"
 
 ecc-jsbn@~0.1.1:
   version "0.1.1"
@@ -2071,6 +2078,10 @@ https-browserify@^1.0.0:
 iconv-lite@~0.4.13:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
+
+idx@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/idx/-/idx-2.2.0.tgz#8544749f9faba6409822b5d9488ba5bc77b8fbfe"
 
 ieee754@^1.1.4:
   version "1.1.8"
@@ -3935,10 +3946,6 @@ split-string@^3.0.1, split-string@^3.0.2:
 sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
-
-squeeze-js@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/squeeze-js/-/squeeze-js-1.0.3.tgz#372a3b4f6666ee433b7e8848fe68fd2e0d76cde9"
 
 sshpk@^1.7.0:
   version "1.13.1"

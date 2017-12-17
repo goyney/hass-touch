@@ -2,8 +2,8 @@ import React from 'react';
 import { Container } from 'semantic-ui-react';
 import Moment from 'react-moment';
 
-import Weather from './Weather';
-import Presence from './Presence';
+import Weather from '../Weather/Weather';
+import Presence from '../Presence/Presence';
 
 export default class Home extends React.Component {
   render() {
