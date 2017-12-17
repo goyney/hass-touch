@@ -1,0 +1,42 @@
+@import '../../style/variables';
+
+#home-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: center;
+}
+
+.time-weather {
+  display: flex;
+  flex: 3;
+  flex-direction: column;
+  justify-content: center;
+  line-height: initial;
+  width: 100%;
+
+  .today-date {
+    font-size: 25px;
+    text-align: center;
+
+    sup {
+      font-size: 16px;
+      margin-left: 2px;
+    }
+  }
+
+  .current-time-weather {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  .current-time {
+    font: {
+      size: 140px;
+      weight: 300;
+    }
+    line-height: 120px;
+    margin-right: 25px;
+  }
+}

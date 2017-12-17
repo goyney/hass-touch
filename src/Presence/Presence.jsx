@@ -101,6 +101,8 @@ export default class Presence extends React.Component {
   }
 
   render() {
-    return <div className='presence-container'>{this._displayFamilyPresence()}</div>;
+    const { className } = this.props;
+
+    return <div className={className}>{this._displayFamilyPresence()}</div>;
   }
 }

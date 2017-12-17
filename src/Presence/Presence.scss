@@ -1,11 +1,9 @@
 @import '../../style/variables';
 
 .presence-container {
-  bottom: 0;
   display: flex;
+  flex: 1;
   justify-content: center;
-  padding: 2rem 0;
-  position: absolute;
   width: 100%;
 
   & > div {

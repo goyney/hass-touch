@@ -1,6 +1,8 @@
 import React from 'react';
 import idx from 'idx';
 
+import './Weather.scss';
+
 const icons = {
   'clear-day': 'sunny',
   'clear-night': 'night',
@@ -16,7 +18,7 @@ const icons = {
 
 export default class Weather extends React.Component {
   render() {
-    const { sensors } = this.props;
+    const { sensors, className } = this.props;
 
     const icon = icons[idx(sensors, _ => _.dark_sky_icon.state)];
     const currentTemp = Math.round(idx(sensors, _ => _.dark_sky_temperature.state));
@@ -25,13 +27,24 @@ export default class Weather extends React.Component {
     const precipChance = idx(sensors, _ => _.dark_sky_precip_probability.state);
 
     return (
-      <div>
-        <p>
+      <div className={className}>
+        <div className='current-conditions'>
           <i className={`mdi mdi-weather-${icon}`} /> {currentTemp}&deg;
-        </p>
-        <p>HIGH {highTemp}&deg;</p>
-        <p>LOW {lowTemp}&deg;</p>
-        <p>RAIN {precipChance}%</p>
+        </div>
+        <div className='todays-forecast'>
+          <div className='todays-high'>
+            <h3>High</h3>
+            <p>{highTemp}&deg;</p>
+          </div>
+          <div className='todays-low'>
+            <h3>Low</h3>
+            <p>{lowTemp}&deg;</p>
+          </div>
+          <div className='todays-percip'>
+            <h3>Rain</h3>
+            <p>{precipChance}%</p>
+          </div>
+        </div>
       </div>
     );
   }
