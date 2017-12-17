@@ -1,9 +1,11 @@
 import React from 'react';
 import { createConnection, subscribeEntities } from 'home-assistant-js-websocket';
 import { Container, Sidebar } from 'semantic-ui-react';
+import Transition from 'react-transition-group/Transition';
 
 import config from './config.json';
 
+import Loading from './Loading/Loading';
 import ControlPanel from './ControlPanel/ControlPanel';
 import Home from './Home/Home';
 import Alarm from './Alarm/Alarm';
@@ -77,6 +79,8 @@ export default class App extends React.Component {
   };
 
   componentDidMount() {
+    // Might put a timeout here to allow the loading screen
+    // to play through at least one animation
     this._connectToHass();
   }
 
@@ -85,18 +89,16 @@ export default class App extends React.Component {
 
     return (
       <Sidebar.Pushable>
+        <Transition in={this.state.hass.lastUpdate === false} timeout={1000} unmountOnExit>
+          {(state) => <Loading className={`fade-${state}`} />}
+        </Transition>
         <ControlPanel
           activePage={this.state.activePage}
           changePage={this._changePage}
         />
         <Sidebar.Pusher as={Container.fluid} className='information-panel'>
           <PageComponent entities={this.state.hass.entities} />
-          {/* <header>
-            <h1>Home Assistant</h1>
-            <p>Connection to Home Assistant: {this.state.hass.connection ? 'Connected' : 'Disconnected'}</p>
-            <p>There are {Object.keys(this.state.hass.entities).length} subscribed event groups.</p>
-          </header>
-          <Lights
+          {/* <Lights
             connection={this.state.hass.connection}
             groups={this.state.hass.entities.group}
             lights={this.state.hass.entities.light}

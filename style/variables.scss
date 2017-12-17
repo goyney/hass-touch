@@ -10,6 +10,12 @@ $primary-color: $blue;
 $background-color: $grey;
 $text-color: $white;
 
+// Color variations
+$lightblue: lighten($blue, 40);
+
 // Measurements
 $screen-height: 480px;
 $sidebar-width: 100px;
+
+// Timing
+$loading-time: 6s;

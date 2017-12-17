@@ -1,0 +1,158 @@
+@import '../../style/variables';
+
+.initializing {
+  background: {
+    color: $blue;
+    image: radial-gradient(circle, $blue, darken($blue, 10));
+    position: 50% 50%;
+    size: cover;
+  }
+  height: 100vh;
+  opacity: 1;
+  overflow: hidden;
+  position: absolute;
+  width: 100vw;
+  z-index: 200;
+
+  &.fade-exiting {
+    transition: opacity 1s ease-out;
+    opacity: 0;
+  }
+
+  svg {
+    height: 66vh;
+    margin: {
+      left: 16.666vw;
+      top: 16.666vh;
+    }
+    width: 66vw;
+
+    path, circle {
+      fill: none;
+      stroke: $lightblue;
+      stroke-linejoin: round;
+      stroke-width: 0.125px;
+
+      &.house {
+        stroke-linecap: round;
+        stroke-width: .3px;
+      }
+    }
+
+    circle {
+      animation: nodes $loading-time linear infinite;
+    }
+
+    .house {
+      animation: house $loading-time ease infinite;
+    }
+
+    .circut {
+      animation: circut $loading-time cubic-bezier(.7,.1,.1,.9) infinite;
+    }
+  }
+}
+
+@keyframes house {
+  0% {
+    stroke-dasharray: 50 50;
+    stroke-dashoffset: -50;
+  }
+  45% {
+    stroke-dashoffset: -100;
+  }
+  50% {
+    stroke: $lightblue;
+  }
+  60% {
+    stroke: $white;
+  }
+  75% {
+    stroke: $lightblue;
+  }
+  80% {
+    stroke-dashoffset: -100;
+  }
+  100% {
+    stroke-dasharray: 50 50;
+    stroke-dashoffset: -130;
+  }
+}
+
+@keyframes circut {
+  0% {
+    stroke-dasharray: 20 20;
+    stroke-dashoffset: -20;
+  }
+  13% {
+    stroke-dashoffset: -20;
+  }
+  50% {
+    stroke: $lightblue;
+    stroke-dashoffset: -40;
+  }
+  60% {
+    stroke: $white;
+  }
+  70% {
+    stroke: $lightblue;
+  }
+  85% {
+    stroke-dashoffset: -40;
+  }
+  100% {
+    stroke-dasharray: 20 20;
+    stroke-dashoffset: -60;
+  }
+}
+
+@keyframes nodes {
+  0% {
+    stroke-dasharray: 0 4;
+  }
+  25% {
+    stroke-dasharray: 0 4;
+  }
+  35% {
+    stroke: $lightblue;
+    stroke-dasharray: 4 0;
+  }
+  41% {
+    fill: none;
+  }
+  42% {
+    fill: $lightblue;
+  }
+  55% {
+    fill: none;
+    stroke: $lightblue;
+  }
+  65% {
+    fill: $white;
+    stroke: $white;
+  }
+  75% {
+    fill: none;
+    stroke: $lightblue;
+    stroke-dasharray: 4 0;
+  }
+  85% {
+    fill: $lightblue;
+    stroke: $lightblue;
+  }
+  93% {
+    fill: none;
+    stroke-dasharray: 4 0;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dasharray: 0 4;
+    stroke-dashoffset: -4;
+  }
+}
+
+@for $i from 1 to 15 {
+  .initializing svg circle:nth-child(#{$i}n) {
+    animation-delay: $i * -($loading-time * 0.009);
+  }
+}
