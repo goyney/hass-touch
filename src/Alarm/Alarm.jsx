@@ -16,8 +16,7 @@ export default class Alarm extends React.Component {
   constructor() {
     super();
     this.state = {
-      currentInput: '',
-      timeout: null
+      currentInput: ''
     };
   }
 
