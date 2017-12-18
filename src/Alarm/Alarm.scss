@@ -44,7 +44,7 @@
     }
   }
 
-  #input-status {
+  .input-status {
     font-size: 40px;
     height: 24px;
     letter-spacing: 30px;
@@ -94,7 +94,7 @@
       background-color: $grey;
       font-size: 36px;
 
-      &.button-\*, &.button-\# {
+      &.button-backspace {
         color: rgba($white, .3);
       }
     }
