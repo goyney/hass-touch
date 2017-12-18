@@ -1,0 +1,142 @@
+@import '../../style/variables';
+
+#alarm-panel {
+  header {
+    padding: 2rem 0;
+    text-align: center;
+  }
+
+  button {
+    border: none;
+    color: $white;
+    font-weight: 200;
+    font-size: 24px;
+    height: 80px;
+    outline: none;
+    overflow: hidden;
+    position: relative;
+    text-transform: uppercase;
+    width: 100px;
+
+    &::after {
+      background: rgba($white, .2);
+      border-radius: 100%;
+      content: '';
+      height: 5px;
+      left: 50%;
+      opacity: 0;
+      position: absolute;
+      top: 50%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+      width: 5px;
+    }
+
+    &:focus:not(:active)::after {
+      animation: ripple 1s ease-out;
+    }
+  }
+
+  .system-status {
+    font: {
+      size: 32px;
+      weight: 300;
+    }
+  }
+
+  #input-status {
+    font-size: 40px;
+    height: 24px;
+    letter-spacing: 30px;
+    margin: {
+      bottom: -5px;
+      left: 30px;
+    }
+    padding-top: 5px;
+  }
+
+  .alarm-ready {
+    color: $green;
+  }
+
+  .alarm-not-ready {
+    color: $red;
+  }
+
+  .alarm-control {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .alarm-panic-chime {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    button {
+      &.button-chime {
+        background: transparent;
+        font-size: 38px;
+      }
+
+      &.button-panic {
+        background-color: $red;
+      }
+    }
+  }
+
+  .alarm-keypad {
+    display: flex;
+    flex-wrap: wrap;
+    width: 300px;
+
+    button {
+      background-color: $grey;
+      font-size: 36px;
+
+      &.button-\*, &.button-\# {
+        color: rgba($white, .3);
+      }
+    }
+  }
+
+  .alarm-mode {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    button {
+      &.button-off {
+        background-color: darken($white, 5);
+        color: $black;
+
+        &::after {
+          background: rgba($black, .2);
+        }
+      }
+
+      &.button-stay {
+        background-color: $green;
+      }
+
+      &.button-away {
+        background-color: $red;
+      }
+    }
+  }
+}
+
+@keyframes ripple {
+  0% {
+    opacity: 1;
+    transform: scale(0, 0);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(25, 25);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(40, 40);
+  }
+}
