@@ -6,9 +6,24 @@ html, body {
 }
 
 body {
-  background-color: $black;
+  background: {
+    color: $blue;
+    image: radial-gradient(circle, $blue, darken($blue, 10));
+    position: 50% 50%;
+    size: cover;
+  }
   color: $white;
   font-family: 'Open Sans';
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+.information-panel.pusher {
+  background: $black;
+  width: calc(100% - #{$sidebar-width});
 
   &::after {
     background: {
@@ -24,13 +39,4 @@ body {
     top: 0;
     z-index: -1;
   }
-}
-
-#root {
-  height: 100%;
-  width: 100%;
-}
-
-.information-panel {
-  width: calc(100% - #{$sidebar-width});
 }
