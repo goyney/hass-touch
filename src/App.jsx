@@ -80,7 +80,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     // Might put a timeout here to allow the loading screen
-    // to play through at least one animation
+    // to play through at least one animation cycle
     this._connectToHass();
   }
 
@@ -98,13 +98,6 @@ export default class App extends React.Component {
         />
         <Sidebar.Pusher as={Container.fluid} className='information-panel'>
           <PageComponent entities={this.state.hass.entities} />
-          {/* <Lights
-            connection={this.state.hass.connection}
-            groups={this.state.hass.entities.group}
-            lights={this.state.hass.entities.light}
-            fans={this.state.hass.entities.fan}
-            switches={this.state.hass.entities.switch}
-          /> */}
         </Sidebar.Pusher>
       </Sidebar.Pushable>
     );
