@@ -31,27 +31,25 @@ export default class Alarm extends React.Component {
         currentInput = `${currentInput}${key}`;
       }
 
-      clearTimeout(this.state.timeout);
-      this.setState({
-        currentInput,
-        timeout: setTimeout(() => this._resetInput(), 10000)
-      });
+      this.setState({ currentInput });
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => this._resetInput(), 10000);
     } else {
       this._sendCommand(key);
     }
   }
 
   _sendCommand(command) {
-    console.log('SENDING COMMAND', command, this.state.currentInput);
+    if (this.state.currentInput.length === 4) {
+      console.log('SENDING COMMAND', command, this.state.currentInput);
+    }
+
     this._resetInput();
   }
 
   _resetInput() {
-    clearTimeout(this.state.timeout);
-    this.setState({
-      currentInput: '',
-      timeout: null
-    });
+    clearTimeout(this.timeout);
+    this.setState({ currentInput: '' });
   }
 
   _determineSystemStatus() {
