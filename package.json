@@ -11,6 +11,7 @@
     "build": "parcel build ./public/index.html"
   },
   "devDependencies": {
+    "animate.css": "^3.5.2",
     "babel-plugin-module-resolver": "^3.0.0",
     "babel-preset-react-app": "^3.1.0",
     "babel-preset-stage-3": "^6.24.1",

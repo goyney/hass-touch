@@ -55,14 +55,6 @@
     padding-top: 5px;
   }
 
-  .alarm-ready {
-    color: $green;
-  }
-
-  .alarm-not-ready {
-    color: $red;
-  }
-
   .alarm-control {
     display: flex;
     justify-content: space-evenly;
@@ -123,6 +115,28 @@
         background-color: $red;
       }
     }
+  }
+
+  .alarm-ready {
+    color: $green;
+  }
+
+  .alarm-not_ready,
+  .alarm-unknown,
+  .alarm-armed_home,
+  .alarm-armed_away,
+  .alarm-armed_home_exit_now,
+  .alarm-armed_away_exit_now,
+  .alarm-triggered {
+    color: $red;
+  }
+
+  .alarm-disarm_now {
+    color: $orange;
+  }
+
+  .alarm-triggered {
+    font-weight: 500;
   }
 }
 

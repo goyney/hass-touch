@@ -5,6 +5,7 @@ import { Container } from 'semantic-ui-react';
 
 import './Alarm.scss';
 
+const exitDelayDefault = 60;
 const actionsToNumber = {
   off: 1,
   away: 2,
@@ -16,6 +17,7 @@ export default class Alarm extends React.Component {
   constructor() {
     super();
     this.state = {
+      status: 'unknown',
       currentInput: ''
     };
   }
@@ -31,8 +33,8 @@ export default class Alarm extends React.Component {
       }
 
       this.setState({ currentInput });
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => this._resetInput(), 10000);
+      clearTimeout(this.keypadTimeout);
+      this.keypadTimeout = setTimeout(() => this._resetInput(), 10000);
     } else {
       this._sendCommand(key);
     }
@@ -47,14 +49,87 @@ export default class Alarm extends React.Component {
   }
 
   _resetInput() {
-    clearTimeout(this.timeout);
+    clearTimeout(this.keypadTimeout);
     this.setState({ currentInput: '' });
   }
 
+  _startExitDelay() {
+    if (!this.exitDelayTimer) {
+      this.setState({ exitDelay: exitDelayDefault });
+      this.exitDelayTimer = setInterval(() => {
+        if (this.state.exitDelay === 0) {
+          clearInterval(this.exitDelayTimer);
+          this.exitDelayTimer = null;
+        } else {
+          this.setState({ exitDelay: this.state.exitDelay - 1 });
+        }
+      }, 1000);
+    }
+  }
+
   _determineSystemStatus() {
-    const { entities } = this.props;
+    let status, animation = false;
+    switch (this.state.status) {
+      case 'ready':
+        status = 'System Ready';
+        break;
+      case 'not_ready':
+        status = 'System Not Ready';
+        break;
+      case 'disarm_now':
+        status = 'Disarm Now';
+        animation = 'pulse';
+        break;
+      case 'armed_home_exit_now':
+      case 'armed_away_exit_now':
+        status = `Arming System (${this.state.exitDelay})`;
+        animation = 'pulse';
+        break;
+      case 'armed_home':
+        status = 'System Armed - Stay';
+        break;
+      case 'armed_away':
+        status = 'System Armed - Away';
+        break;
+      case 'triggered':
+        status = 'ALARM TRIGGERED';
+        animation = 'tada';
+        break;
+      default:
+        status = 'Unknown';
+        break;
+    }
+
+    return (
+      <h1 className={cx({
+        'system-status': true,
+        [`alarm-${this.state.status}`]: true,
+        animated: animation !== false,
+        infinite: animation !== false,
+        [animation]: true
+      })}>
+        {status}
+      </h1>
+    );
+  }
+
+  _determineArmingState(entities) {
+    const panelState = idx(entities, _ => _.sensor.alarm_panel_display.state);
+    const systemState = idx(entities, _ => _.alarm_control_panel.alarm_panel.state);
     const systemReady = idx(entities, _ => _.alarm_control_panel.alarm_panel.attributes.ready);
-    return <h1 className={`system-status alarm-${!systemReady ? 'not-' : ''}ready`}>System {!systemReady ? 'Not ' : ''}Ready</h1>;
+
+    if (systemState === 'triggered') {
+      this.setState({ status: systemState });
+    } else if (systemState === 'disarmed') {
+      this.setState({ status: systemReady ? 'ready' : 'not_ready' });
+    } else if (panelState.includes('DISARM SYSTEM')) {
+      this.setState({ status: 'disarm_now' });
+    } else if (panelState.includes('You may exit now')) {
+      this.setState({ status: `${systemState}_exit_now` });
+      this._startExitDelay();
+    } else {
+      this.setState({ status: systemState });
+    }
   }
 
   _generateButtons(buttons) {
@@ -79,6 +154,11 @@ export default class Alarm extends React.Component {
 
   _generateCurrentInput() {
     return this.state.currentInput.split('').map((input, i) => <span key={i}>&bull;</span>);
+  }
+
+  componentWillReceiveProps(newProps) {
+    const { entities } = newProps;
+    this._determineArmingState(entities);
   }
 
   render() {

@@ -16,6 +16,7 @@ import Lights from './Lights/Lights';
 
 import 'mdi/css/materialdesignicons.min.css';
 import 'semantic-ui-css/semantic.min.css';
+import 'animate.css/animate.min.css';
 import 'style/main.scss';
 
 const pages = {
