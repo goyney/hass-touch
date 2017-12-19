@@ -38,7 +38,7 @@ export default class App extends React.Component {
         lastUpdate: false,
         entities: {}
       },
-      activePage: 'alarm'
+      activePage: 'home'
     };
   }
 

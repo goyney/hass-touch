@@ -22,6 +22,30 @@ export default class Alarm extends React.Component {
     };
   }
 
+  _initializeAlarmPanel(props) {
+    const { entities } = props;
+    this._determineArmingState(entities);
+  }
+
+  _determineArmingState(entities) {
+    const panelState = idx(entities, _ => _.sensor.alarm_panel_display.state) || '';
+    const systemState = idx(entities, _ => _.alarm_control_panel.alarm_panel.state);
+    const systemReady = idx(entities, _ => _.alarm_control_panel.alarm_panel.attributes.ready);
+
+    if (systemState === 'triggered') {
+      this.setState({ status: systemState });
+    } else if (systemState === 'disarmed') {
+      this.setState({ status: systemReady ? 'ready' : 'not_ready' });
+    } else if (panelState.includes('DISARM SYSTEM')) {
+      this.setState({ status: 'disarm_now' });
+    } else if (panelState.includes('You may exit now')) {
+      this.setState({ status: `${systemState}_exit_now` });
+      this._startExitDelay();
+    } else {
+      this.setState({ status: systemState });
+    }
+  }
+
   _handleKeypadEntry = key => () => {
     const numberPressed = !isNaN(parseFloat(key)) && isFinite(key);
     if (numberPressed || key === 'backspace') {
@@ -67,7 +91,7 @@ export default class Alarm extends React.Component {
     }
   }
 
-  _determineSystemStatus() {
+  _generateSystemStatus() {
     let status, animation = false;
     switch (this.state.status) {
       case 'ready':
@@ -113,25 +137,6 @@ export default class Alarm extends React.Component {
     );
   }
 
-  _determineArmingState(entities) {
-    const panelState = idx(entities, _ => _.sensor.alarm_panel_display.state);
-    const systemState = idx(entities, _ => _.alarm_control_panel.alarm_panel.state);
-    const systemReady = idx(entities, _ => _.alarm_control_panel.alarm_panel.attributes.ready);
-
-    if (systemState === 'triggered') {
-      this.setState({ status: systemState });
-    } else if (systemState === 'disarmed') {
-      this.setState({ status: systemReady ? 'ready' : 'not_ready' });
-    } else if (panelState.includes('DISARM SYSTEM')) {
-      this.setState({ status: 'disarm_now' });
-    } else if (panelState.includes('You may exit now')) {
-      this.setState({ status: `${systemState}_exit_now` });
-      this._startExitDelay();
-    } else {
-      this.setState({ status: systemState });
-    }
-  }
-
   _generateButtons(buttons) {
     return buttons.map((key, i) => {
       let id, output;
@@ -157,8 +162,11 @@ export default class Alarm extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    const { entities } = newProps;
-    this._determineArmingState(entities);
+    this._initializeAlarmPanel(newProps);
+  }
+
+  componentDidMount() {
+    this._initializeAlarmPanel(this.props);
   }
 
   render() {
@@ -168,7 +176,7 @@ export default class Alarm extends React.Component {
     return (
       <Container id='alarm-panel'>
         <header>
-          {this._determineSystemStatus()}
+          {this._generateSystemStatus()}
           <div className='input-status'>{this._generateCurrentInput()}</div>
         </header>
         <div className='alarm-control'>
