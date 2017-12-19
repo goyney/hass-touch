@@ -7,7 +7,7 @@ const menuItems = [
   {
     id: 'home',
     name: 'Home',
-    icon: 'home'
+    icon: 'home-assistant'
   },
   {
     id: 'alarm',
