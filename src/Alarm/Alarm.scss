@@ -69,6 +69,10 @@
       &.button-chime {
         background: transparent;
         font-size: 38px;
+
+        &[disabled] {
+          color: rgba($white, .3);
+        }
       }
 
       &.button-panic {

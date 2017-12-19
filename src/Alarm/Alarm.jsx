@@ -139,18 +139,20 @@ export default class Alarm extends React.Component {
 
   _generateButtons(buttons) {
     return buttons.map((key, i) => {
-      let id, output;
+      let id, output, disabled = false;
 
       if (typeof key === 'object') {
         id = key.name;
         output = <i className={`mdi ${key.icon}`} />;
+        disabled = key.disabled;
       } else {
         id = key;
         output = key;
+        disabled = key === '';
       }
 
       return (
-        <button key={i} className={`button-${id}`} onClick={this._handleKeypadEntry(id)} disabled={key === ''}>
+        <button key={i} className={`button-${id}`} onClick={this._handleKeypadEntry(id)} disabled={disabled}>
           {output}
         </button>
       );
@@ -180,7 +182,15 @@ export default class Alarm extends React.Component {
           <div className='input-status'>{this._generateCurrentInput()}</div>
         </header>
         <div className='alarm-control'>
-          <div className='alarm-panic-chime'>{this._generateButtons([{ name: 'chime', icon: `mdi-bell${!chime ? '-off' : ''}` }])}</div>
+          <div className='alarm-panic-chime'>
+            {this._generateButtons([
+              {
+                name: 'chime',
+                icon: `mdi-bell${!chime ? '-off' : ''}`,
+                disabled: !['ready', 'not_ready'].includes(this.state.status)
+              }
+            ])}
+          </div>
           <div className='alarm-keypad'>{this._generateButtons([1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, { name: 'backspace', icon: 'mdi-backspace' }])}</div>
           <div className='alarm-mode'>{this._generateButtons(['off', 'stay', 'away'])}</div>
         </div>
