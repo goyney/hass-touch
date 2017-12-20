@@ -38,6 +38,7 @@
   }
 
   .system-status {
+    transition: color 250ms linear;
     font: {
       size: 32px;
       weight: 300;
@@ -129,14 +130,18 @@
   .alarm-unknown,
   .alarm-armed_home,
   .alarm-armed_away,
-  .alarm-armed_home_exit_now,
-  .alarm-armed_away_exit_now,
   .alarm-triggered {
     color: $red;
   }
 
+  .alarm-armed_home_exit_now,
+  .alarm-armed_away_exit_now,
   .alarm-disarm_now {
     color: $orange;
+
+    &.tada {
+      color: $red;
+    }
   }
 
   .alarm-triggered {

@@ -6,6 +6,7 @@ import { Container } from 'semantic-ui-react';
 import './Alarm.scss';
 
 const exitDelayDefault = 60;
+const disarmDelayDefault = 30;
 
 export default class Alarm extends React.Component {
   constructor() {
@@ -32,6 +33,7 @@ export default class Alarm extends React.Component {
       this.setState({ status: systemReady ? 'ready' : 'not_ready' });
     } else if (panelState.includes('DISARM SYSTEM')) {
       this.setState({ status: 'disarm_now' });
+      this._startDisarmDelay();
     } else if (panelState.includes('You may exit now')) {
       this.setState({ status: `${systemState}_exit_now` });
       this._startExitDelay();
@@ -63,7 +65,7 @@ export default class Alarm extends React.Component {
     const actionToService = {
       off: 'alarm_disarm',
       away: 'alarm_arm_away',
-      stay: 'alarm_arm_stay',
+      stay: 'alarm_arm_home',
       chime: 'alarm_toggle_chime'
     };
 
@@ -93,6 +95,20 @@ export default class Alarm extends React.Component {
     }
   }
 
+  _startDisarmDelay() {
+    if (!this.disarmDelayTimer) {
+      this.setState({ disarmDelay: disarmDelayDefault });
+      this.disarmDelayTimer = setInterval(() => {
+        if (this.state.disarmDelay === 0) {
+          clearInterval(this.disarmDelayTimer);
+          this.disarmDelayTimer = null;
+        } else {
+          this.setState({ disarmDelay: this.state.disarmDelay -1 });
+        }
+      }, 1000);
+    }
+  }
+
   _generateSystemStatus() {
     let status, animation = false;
     switch (this.state.status) {
@@ -103,8 +119,8 @@ export default class Alarm extends React.Component {
         status = 'System Not Ready';
         break;
       case 'disarm_now':
-        status = 'Disarm Now';
-        animation = 'pulse';
+        status = `Disarm Now (${this.state.disarmDelay})`;
+        animation = this.state.disarmDelay < 11 ? 'tada' : 'pulse';
         break;
       case 'armed_home_exit_now':
       case 'armed_away_exit_now':

@@ -32,6 +32,7 @@ const pages = {
 export default class App extends React.Component {
   constructor() {
     super();
+    const queryParams = this._getQueryParams();
     this.state = {
       hass: {
         connection: false,
@@ -39,8 +40,19 @@ export default class App extends React.Component {
         lastUpdate: false,
         entities: {}
       },
-      activePage: 'home'
+      activePage: queryParams.page || 'home'
     };
+  }
+
+  _getQueryParams() {
+    const query = window.location.search;
+    return (/^[?#]/.test(query) ? query.slice(1) : query)
+      .split('&')
+      .reduce((params, param) => {
+        let [ key, value ] = param.split('=');
+        params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : '';
+        return params;
+      }, { });
   }
 
   _cleanEntityKeys(entities) {
@@ -77,7 +89,9 @@ export default class App extends React.Component {
   }
 
   _changePage = (e, { name }) => {
-    this.setState({ activePage: name });
+    if (this.state.activePage !== name) {
+      this.setState({ activePage: name });
+    }
   };
 
   componentDidMount() {
@@ -103,7 +117,10 @@ export default class App extends React.Component {
             <PageComponent connection={this.state.hass.connection} entities={this.state.hass.entities} />
           </Sidebar.Pusher>
         </Sidebar.Pushable>
-        <Notifications hass={this.state.hass} />
+        <Notifications
+          hass={this.state.hass}
+          changePage={this._changePage}
+        />
       </div>
     );
   }

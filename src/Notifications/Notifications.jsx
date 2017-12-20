@@ -2,9 +2,9 @@ import React from 'react';
 import Sound from 'react-sound';
 import idx from 'idx';
 
-import config from '../config.json';
-
-import beep from './beep.wav';
+import beep from './quick-beep.wav';
+import chime from './chime.wav';
+import disarm from './disarm.wav';
 
 // Notifications can exist in a few ways:
 // * Sound only (e.g. Alarm Chime when door opens)
@@ -14,7 +14,9 @@ import beep from './beep.wav';
 // * Pop-up notification only
 
 const soundsDefinition = {
-  notification: `/dist/${beep}`
+  beep: `/dist/${beep}`,
+  chime: `/dist/${chime}`,
+  disarm: `/dist/${disarm}`
 };
 
 export default class Notifications extends React.Component {
@@ -25,7 +27,10 @@ export default class Notifications extends React.Component {
 
   _preloadState() {
     return Object.keys(soundsDefinition).reduce((sounds, soundId) => {
-      sounds[soundId] = 'STOPPED';
+      sounds[soundId] = {
+        status: 'STOPPED',
+        loop: false
+      };
       return sounds;
     }, {});
   }
@@ -36,64 +41,85 @@ export default class Notifications extends React.Component {
         <Sound
           key={soundId}
           url={soundsDefinition[soundId]}
-          playStatus={this.state[soundId]}
+          playStatus={this.state[soundId].status}
           onFinishedPlaying={() => this._stopSound(soundId)}
+          loop={this.state[soundId].loop}
           autoLoad
         />
       );
     });
   }
 
-  _playSound(soundId) {
-    this.setState({ [soundId]: 'PLAYING' });
+  _playSound(soundId, loop = false) {
+    this.setState({
+      [soundId]: {
+        status: 'PLAYING',
+        loop
+      }
+    });
   }
 
   _stopSound(soundId) {
-    this.setState({ [soundId]: 'STOPPED' });
+    this.setState({
+      [soundId]: {
+        status: 'STOPPED',
+        loop: false
+      }
+    });
+  }
+
+  _showPanel(panelId) {
+    const { changePage } = this.props;
+    changePage(null, { name: panelId });
   }
 
   componentWillReceiveProps(newProps) {
-    const rules = config.notifications || [];
     const entities = newProps.hass.entities;
 
-    rules.forEach(rule => {
-      const { name = 'Unnamed', trigger, condition, action } = rule;
-      if (typeof trigger !== 'undefined' && typeof action !== 'undefined') {
-        const triggerEntity = (trigger.entity || '').split('.');
+    // Alarm chime status is toggled
+    const oldChimeState = idx(this.props.hass.entities, _ => _.alarm_control_panel.alarm_panel.attributes.chime);
+    const newChimeState = idx(newProps.hass.entities, _ => _.alarm_control_panel.alarm_panel.attributes.chime);
+    if (typeof oldChimeState !== 'undefined' && oldChimeState !== newChimeState) {
+      this._playSound('beep');
+    }
 
-        if (triggerEntity[0] in entities) {
-          console.log('Yeah its there');
-        }
-
-        if (triggerEntity[1]) {
-          if (triggerEntity[1] in entities[triggerEntity[0]]) {
-            console.log('Part 2 is there');
-          } else if (triggerEntity[1] === '*') {
-            console.log('Watch all services in this domain, state only unless there is an attributes value next');
-          }
-        } else {
-          // Watch all service in this domain, state only
-        }
-
-        if (triggerEntity[2] === 'attributes') {
-          console.log('Looking at attributes');
-
-          if (triggerEntity[3]) {
-            console.log('And we have the attribute name', triggerEntity[3]);
-          }
-        }
-
-        console.log(entities);
-        console.log(triggerEntity);
-
+    // Alarm state changes
+    const oldAlarmState = idx(this.props.hass.entities, _ => _.alarm_control_panel.alarm_panel.state);
+    const newAlarmState = idx(newProps.hass.entities, _ => _.alarm_control_panel.alarm_panel.state);
+    if (typeof oldAlarmState !== 'undefined' && oldAlarmState !== newAlarmState) {
+      if (oldAlarmState === 'disarmed') {
+        this._playSound('chime');
+      } else {
+        this._playSound('beep');
       }
-    });
+    }
 
-    // const oldChimeState = idx(this.props.hass.entities, _ => _.alarm_control_panel.alarm_panel.attributes.chime);
-    // const newChimeState = idx(newProps.hass.entities, _ => _.alarm_control_panel.alarm_panel.attributes.chime);
-    // if (typeof oldChimeState !== 'undefined' && oldChimeState !== newChimeState) {
-    //   this._playSound('notification');
-    // }
+    // Alarm doors or windows are faulted while alarm is off and chime is on
+    if (newAlarmState === 'disarmed' && newChimeState) {
+      const binarySensors = idx(newProps.hass.entities, _ => _.binary_sensor);
+      const monitoredBinarySensors = Object.keys(binarySensors).filter(sensor => binarySensors[sensor].attributes.device_class === 'opening');
+
+      const ringChime = monitoredBinarySensors.reduce((ringChime, sensor) => {
+        const oldBinarySensor = idx(this.props.hass.entities, _ => _.binary_sensor[sensor].state);
+        const newBinarySensor = idx(newProps.hass.entities, _ => _.binary_sensor[sensor].state);
+        return typeof oldBinarySensor !== 'undefined' && oldBinarySensor === 'off' && newBinarySensor === 'on';
+      }, false);
+
+      if (ringChime) {
+        this._playSound('chime');
+      }
+    }
+
+    // Alarm needs to be disarmed (20 slow beep, 10 fast beep, then ALARM!!!!)
+    if (newAlarmState !== 'disarmed') {
+      const panelState = idx(newProps.hass.entities, _ => _.sensor.alarm_panel_display.state) || '';
+      if (panelState.includes('DISARM SYSTEM')) {
+        this._playSound('disarm', true);
+        this._showPanel('alarm');
+      }
+    } else {
+      this._stopSound('disarm');
+    }
   }
 
   render() {
