@@ -6,12 +6,6 @@ import { Container } from 'semantic-ui-react';
 import './Alarm.scss';
 
 const exitDelayDefault = 60;
-const actionsToNumber = {
-  off: 1,
-  away: 2,
-  stay: 3,
-  chime: 9
-};
 
 export default class Alarm extends React.Component {
   constructor() {
@@ -65,8 +59,16 @@ export default class Alarm extends React.Component {
   }
 
   _sendCommand(command) {
-    if (this.state.currentInput.length === 4) {
-      console.log('SENDING COMMAND', command, this.state.currentInput);
+    const { connection } =  this.props;
+    const actionToService = {
+      off: 'alarm_disarm',
+      away: 'alarm_arm_away',
+      stay: 'alarm_arm_stay',
+      chime: 'alarm_toggle_chime'
+    };
+
+    if (this.state.currentInput.length === 4 && Object.keys(actionToService).includes(command)) {
+      connection.callService('alarm_control_panel', actionToService[command], { code: this.state.currentInput });
     }
 
     this._resetInput();

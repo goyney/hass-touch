@@ -98,7 +98,7 @@ export default class App extends React.Component {
           changePage={this._changePage}
         />
         <Sidebar.Pusher as={Container.fluid} className='information-panel'>
-          <PageComponent entities={this.state.hass.entities} />
+          <PageComponent connection={this.state.hass.connection} entities={this.state.hass.entities} />
         </Sidebar.Pusher>
       </Sidebar.Pushable>
     );
