@@ -7,6 +7,7 @@ import config from './config.json';
 
 import Loading from './Loading/Loading';
 import ControlPanel from './ControlPanel/ControlPanel';
+import Notifications from './Notifications/Notifications';
 import Home from './Home/Home';
 import Alarm from './Alarm/Alarm';
 import Climate from './Climate/Climate';
@@ -89,18 +90,21 @@ export default class App extends React.Component {
     const PageComponent = pages[this.state.activePage];
 
     return (
-      <Sidebar.Pushable>
-        <Transition in={this.state.hass.lastUpdate === false} timeout={1000} unmountOnExit>
-          {(state) => <Loading className={`fade-${state}`} />}
-        </Transition>
-        <ControlPanel
-          activePage={this.state.activePage}
-          changePage={this._changePage}
-        />
-        <Sidebar.Pusher as={Container.fluid} className='information-panel'>
-          <PageComponent connection={this.state.hass.connection} entities={this.state.hass.entities} />
-        </Sidebar.Pusher>
-      </Sidebar.Pushable>
+      <div className="touch-container">
+        <Sidebar.Pushable>
+          <Transition in={this.state.hass.lastUpdate === false} timeout={1000} unmountOnExit>
+            {(state) => <Loading className={`fade-${state}`} />}
+          </Transition>
+          <ControlPanel
+            activePage={this.state.activePage}
+            changePage={this._changePage}
+          />
+          <Sidebar.Pusher as={Container.fluid} className='information-panel'>
+            <PageComponent connection={this.state.hass.connection} entities={this.state.hass.entities} />
+          </Sidebar.Pusher>
+        </Sidebar.Pushable>
+        <Notifications hass={this.state.hass} />
+      </div>
     );
   }
 }
