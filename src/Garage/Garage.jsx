@@ -36,15 +36,13 @@ export default class Garage extends React.Component {
   }
 
   _doorStop = () => {
-    if (!this.state.paused) {
-      const doorStyle = window.getComputedStyle(this.garageDoor);
-      const clipPath = doorStyle['clip-path'];
-      const transform = doorStyle.transform;
-      this.garageDoor.style['clip-path'] = clipPath;
-      this.garageDoor.style['transform'] = transform;
-      this._endTraversalTimer();
-      this.setState({ doorState: `${this.state.doorState}-stopped`, traversalTime: this.state.traversalTime - this.traversalElapsedTime });
-    }
+    const doorStyle = window.getComputedStyle(this.garageDoor);
+    const clipPath = doorStyle['clip-path'];
+    const transform = doorStyle.transform;
+    this.garageDoor.style['clip-path'] = clipPath;
+    this.garageDoor.style['transform'] = transform;
+    this._endTraversalTimer();
+    this.setState({ doorState: `${this.state.doorState}-stopped`, traversalTime: this.state.traversalTime - this.traversalElapsedTime });
   };
 
   _startTraversalTimer() {
