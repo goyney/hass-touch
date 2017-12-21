@@ -4,15 +4,20 @@
   fill: $white;
   height: 350px;
 
-  .door-open {
-    clip-path: inset(80% 0 0 0) !important;
-    transform: translate(0, -14px) !important;
-    transition: all $garage-door-traversal-time linear;
+  .door {
+    transition: {
+      property: all;
+      timing-function: linear;
+    }
   }
 
-  .door-closed {
+  .door-opening, .door-opened {
+    clip-path: inset(80% 0 0 0) !important;
+    transform: translate(0, -14px) !important;
+  }
+
+  .door-closing, .door-closed {
     clip-path: inset(0 0 0 0) !important;
     transform: translate(0, 0) !important;
-    transition: all $garage-door-traversal-time linear;
   }
 }

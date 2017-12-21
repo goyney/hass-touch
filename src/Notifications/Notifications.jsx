@@ -110,7 +110,7 @@ export default class Notifications extends React.Component {
       }
     }
 
-    // Alarm needs to be disarmed (20 slow beep, 10 fast beep, then ALARM!!!!)
+    // Alarm needs to be disarmed
     if (newAlarmState !== 'disarmed') {
       const panelState = idx(newProps.hass.entities, _ => _.sensor.alarm_panel_display.state) || '';
       if (panelState.includes('DISARM SYSTEM')) {
