@@ -28,6 +28,7 @@
 
     &.active {
       background-color: $blue;
+      transition: background-color .25s linear;
     }
   }
 }

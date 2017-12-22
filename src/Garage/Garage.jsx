@@ -89,30 +89,39 @@ export default class Garage extends React.Component {
 
   render() {
     return (
-      <Container fluid>
-        <header>
-          <h1>Garage Interface</h1>
-        </header>
-        <svg
-          className={`garage-door door-${this.state.doorState}`}
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-        >
-          <polyline points="22.777,23.547 19.698,23.547 19.698,9.691 4.302,9.691 4.302,23.547 1.223,23.547 1.223,6.611 12,0.453 22.777,6.611 22.777,23.547" />
-          <g
-            className={`door door-${this.state.doorState}`}
-            style={{ transitionDuration: `${this.state.traversalTime}s` }}
-            ref={door => this.garageDoor = door}
+      <Container id='garage-panel'>
+        <div className='garage-status'>
+          <svg
+            className={`garage-door door-${this.state.doorState}`}
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox='0 0 24 24'
           >
-            <rect x="5.842" y="11.188" width="12.317" height="2.464" />
-            <rect x="5.842" y="14.473" width="12.317" height="2.464" />
-            <rect x="5.842" y="17.758" width="12.317" height="2.464" />
-            <rect x="5.842" y="21.043" width="12.317" height="2.464" />
-          </g>
-        </svg>
-        <button onClick={this._doorOpen} disabled={this.state.doorState === 'opened' || this.traversalTimer}>Open</button>
-        <button onClick={this._doorStop} disabled={['opened', 'closed', 'opening-stopped', 'closing-stopped'].includes(this.state.doorState)}>Stop</button>
-        <button onClick={this._doorClose} disabled={this.state.doorState === 'closed' || this.traversalTimer}>Close</button>
+            <polyline points='22.777,23.547 19.698,23.547 19.698,9.691 4.302,9.691 4.302,23.547 1.223,23.547 1.223,6.611 12,0.453 22.777,6.611 22.777,23.547' />
+            <g
+              className={`door door-${this.state.doorState}`}
+              style={{ transitionDuration: `${this.state.traversalTime}s` }}
+              ref={door => this.garageDoor = door}
+            >
+              <rect x='5.842' y='11.188' width='12.317' height='2.464' />
+              <rect x='5.842' y='14.473' width='12.317' height='2.464' />
+              <rect x='5.842' y='17.758' width='12.317' height='2.464' />
+              <rect x='5.842' y='21.043' width='12.317' height='2.464' />
+            </g>
+          </svg>
+          <h3>{this.state.doorState}</h3>
+          <p>For some amount of time</p>
+        </div>
+        <div className='garage-control'>
+          <button onClick={this._doorOpen} disabled={this.state.doorState === 'opened' || this.traversalTimer}>
+            <i className='mdi mdi-arrow-up-bold' />
+          </button>
+          <button onClick={this._doorStop} disabled={['opened', 'closed', 'opening-stopped', 'closing-stopped'].includes(this.state.doorState)}>
+            <i className='mdi mdi-stop' />
+          </button>
+          <button onClick={this._doorClose} disabled={this.state.doorState === 'closed' || this.traversalTimer}>
+            <i className='mdi mdi-arrow-down-bold' />
+          </button>
+        </div>
       </Container>
     );
   }
