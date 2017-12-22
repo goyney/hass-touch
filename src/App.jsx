@@ -95,8 +95,7 @@ export default class App extends React.Component {
   };
 
   componentDidMount() {
-    // Might put a timeout here to allow the loading screen
-    // to play through at least one animation cycle
+    // setTimeout(() => this._connectToHass(), 5500);
     this._connectToHass();
   }
 

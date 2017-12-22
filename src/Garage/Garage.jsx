@@ -17,31 +17,31 @@ export default class Garage extends React.Component {
 
   _doorOpen = () => {
     let traversalTimeLeft = this.state.traversalTime;
-    if (!['closed', 'opening-stopped'].includes(this.state.doorState)) {
+    if (!['closed', 'opening-stopped'].includes(this.state.doorState) && traversalTimeLeft < traversalTimeDefault) {
       traversalTimeLeft = traversalTimeDefault - traversalTimeLeft;
     }
 
-    this._startTraversalTimer();
     this.setState({ doorState: 'opening', traversalTime: traversalTimeLeft });
+    this._startTraversalTimer();
   }
 
   _doorClose = () => {
     let traversalTimeLeft = this.state.traversalTime;
-    if (!['opened', 'closing-stopped'].includes(this.state.doorState)) {
+    if (!['opened', 'closing-stopped'].includes(this.state.doorState) && traversalTimeLeft < traversalTimeDefault) {
       traversalTimeLeft = traversalTimeDefault - traversalTimeLeft;
     }
 
-    this._startTraversalTimer();
     this.setState({ doorState: 'closing', traversalTime: traversalTimeLeft });
+    this._startTraversalTimer();
   }
 
   _doorStop = () => {
+    this._endTraversalTimer();
     const doorStyle = window.getComputedStyle(this.garageDoor);
     const clipPath = doorStyle['clip-path'];
     const transform = doorStyle.transform;
     this.garageDoor.style['clip-path'] = clipPath;
     this.garageDoor.style['transform'] = transform;
-    this._endTraversalTimer();
     this.setState({ doorState: `${this.state.doorState}-stopped`, traversalTime: this.state.traversalTime - this.traversalElapsedTime });
   };
 
