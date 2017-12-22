@@ -15,9 +15,6 @@ import Garage from 'Garage/Garage';
 import Irrigation from 'Irrigation/Irrigation';
 import Lights from 'Lights/Lights';
 
-import 'mdi/css/materialdesignicons.min.css';
-import 'semantic-ui-css/semantic.min.css';
-import 'animate.css/animate.min.css';
 import './App.scss';
 
 const pages = {
