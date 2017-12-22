@@ -2,8 +2,8 @@ import React from 'react';
 import { Container } from 'semantic-ui-react';
 import Moment from 'react-moment';
 
-import Weather from '../Weather/Weather';
-import Presence from '../Presence/Presence';
+import Weather from 'components/Weather/Weather';
+import Presence from 'components/Presence/Presence';
 
 import './Home.scss';
 

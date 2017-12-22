@@ -1,7 +1,9 @@
 import React from 'react';
 import idx from 'idx';
 import moment from 'moment-business-days';
-import config from '../config.json';
+
+import config from 'config/config.json';
+import determineElapsedTime from 'utils/elapsedTime';
 
 import './Presence.scss';
 
@@ -34,22 +36,6 @@ export default class Presence extends React.Component {
     return {};
   }
 
-  _determineElapsedTime(sensor) {
-    const lastChanged = moment(sensor.last_changed).format('YYYY-MM-DD HH:mm:ss.SSSSSSZ');
-    const howLongMins = moment().diff(lastChanged, 'minutes');
-    if (howLongMins === 0) {
-      return 'Moments ago';
-    } else if (howLongMins < 60) {
-      return `For ${howLongMins} minute${howLongMins > 1 ? 's' : ''}`;
-    } else if (howLongMins < 1440) {
-      const howLongHours = Math.floor(howLongMins / 60);
-      return `For ${howLongHours} hour${howLongHours > 1 ? 's' : ''}`;
-    } else if (howLongMins > 1441) {
-      const howLongDays = Math.floor((howLongMins / 60) / 24);
-      return `For ${howLongDays} day${howLongDays > 1 ? 's' : ''}`;
-    }
-  }
-
   _determineWorkTravelTime(sensor) {
     const isBusinessDay = moment().isBusinessDay();
     const isDisplayHours = moment().isBetween(moment('02:00:00', 'hh:mm:ss'), moment('11:00:00', 'hh:mm:ss'));
@@ -63,12 +49,12 @@ export default class Presence extends React.Component {
     if (member.device.state !== 'home') {
       return {
         state: 'out',
-        info: this._determineElapsedTime(member.device)
+        info: determineElapsedTime(member.device.last_changed)
       };
     } else if (idx(member.binarySensors, _ => _.sleep) && member.binarySensors.sleep.state !== 'off') {
       return {
         state: 'sleeping',
-        info: this._determineElapsedTime(member.binarySensors.sleep)
+        info: determineElapsedTime(member.binarySensors.sleep.last_changed)
       };
     } else {
       return {

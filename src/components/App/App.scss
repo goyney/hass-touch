@@ -1,4 +1,4 @@
-@import 'variables';
+@import '../../style/variables';
 
 * {
   font-family: 'Open Sans' !important;
@@ -30,7 +30,7 @@ body {
 
   &::after {
     background: {
-      image: url('../public/images/mountains.png');
+      image: url('../../../public/images/mountains.png');
       position: center;
     }
     bottom: 0;

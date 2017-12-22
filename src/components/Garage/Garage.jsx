@@ -3,6 +3,8 @@ import idx from 'idx';
 import cx from 'classnames';
 import { Container } from 'semantic-ui-react';
 
+import determineElapsedTime from 'utils/elapsedTime';
+
 import './Garage.scss';
 
 const traversalTimeDefault = 12;
@@ -12,7 +14,8 @@ export default class Garage extends React.Component {
     super();
     this.state = {
       doorState: 'closed',
-      traversalTime: traversalTimeDefault
+      traversalTime: traversalTimeDefault,
+      lastChanged: false
     };
   }
 
@@ -24,6 +27,10 @@ export default class Garage extends React.Component {
   _determineGarageState(entities) {
     const garageState = idx(entities, _ => _.cover.garage_door.state);
     const lastChanged = idx(entities, _ => _.cover.garage_door.last_changed);
+
+    this.setState({
+      lastChanged: determineElapsedTime(lastChanged)
+    });
     console.log(garageState, lastChanged);
   }
 
@@ -109,7 +116,7 @@ export default class Garage extends React.Component {
             </g>
           </svg>
           <h3>{this.state.doorState}</h3>
-          <p>For some amount of time</p>
+          <p>{this.state.lastChanged ? this.state.lastChanged : ''}</p>
         </div>
         <div className='garage-control'>
           <button onClick={this._doorOpen} disabled={this.state.doorState === 'opened' || this.traversalTimer}>
