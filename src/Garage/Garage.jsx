@@ -1,4 +1,5 @@
 import React from 'react';
+import idx from 'idx';
 import cx from 'classnames';
 import { Container } from 'semantic-ui-react';
 
@@ -13,6 +14,17 @@ export default class Garage extends React.Component {
       doorState: 'closed',
       traversalTime: traversalTimeDefault
     };
+  }
+
+  _initializeGaragePanel(props) {
+    const { entities } = props;
+    this._determineGarageState(entities);
+  }
+
+  _determineGarageState(entities) {
+    const garageState = idx(entities, _ => _.cover.garage_door.state);
+    const lastChanged = idx(entities, _ => _.cover.garage_door.last_changed);
+    console.log(garageState, lastChanged);
   }
 
   _doorOpen = () => {
@@ -61,6 +73,10 @@ export default class Garage extends React.Component {
     }
   }
 
+  componentWillReceiveProps(newProps) {
+    this._initializeGaragePanel(newProps);
+  }
+
   componentDidMount() {
     this.garageDoor.addEventListener('transitionend', event => {
       if (event.propertyName === 'transform') {
@@ -68,6 +84,7 @@ export default class Garage extends React.Component {
         this.setState({ doorState: this.state.doorState.replace('ing', 'ed'), traversalTime: traversalTimeDefault });
       }
     });
+    this._initializeGaragePanel(this.props);
   }
 
   render() {
