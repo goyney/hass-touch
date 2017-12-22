@@ -2,7 +2,7 @@ import React from 'react';
 import idx from 'idx';
 import moment from 'moment-business-days';
 
-import config from 'config/config.json';
+import config from 'config.json';
 import determineElapsedTime from 'utils/elapsedTime';
 
 import './Presence.scss';

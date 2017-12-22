@@ -3,17 +3,17 @@ import { createConnection, subscribeEntities } from 'home-assistant-js-websocket
 import { Container, Sidebar } from 'semantic-ui-react';
 import Transition from 'react-transition-group/Transition';
 
-import config from 'config/config.json';
+import config from 'config.json';
 
-import Loading from 'components/Loading/Loading';
-import ControlPanel from 'components/ControlPanel/ControlPanel';
-import Notifications from 'components/Notifications/Notifications';
-import Home from 'components/Home/Home';
-import Alarm from 'components/Alarm/Alarm';
-import Climate from 'components/Climate/Climate';
-import Garage from 'components/Garage/Garage';
-import Irrigation from 'components/Irrigation/Irrigation';
-import Lights from 'components/Lights/Lights';
+import Loading from 'Loading/Loading';
+import ControlPanel from 'ControlPanel/ControlPanel';
+import Notifications from 'Notifications/Notifications';
+import Home from 'Home/Home';
+import Alarm from 'Alarm/Alarm';
+import Climate from 'Climate/Climate';
+import Garage from 'Garage/Garage';
+import Irrigation from 'Irrigation/Irrigation';
+import Lights from 'Lights/Lights';
 
 import 'mdi/css/materialdesignicons.min.css';
 import 'semantic-ui-css/semantic.min.css';

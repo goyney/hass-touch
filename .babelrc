@@ -3,12 +3,14 @@
   "plugins": [
     [
       "module-resolver", {
+        "root": [
+          "./components",
+          "./config",
+          "./node_modules"
+        ],
         "alias": {
-          "components": "./components",
           "utils": "./utils",
-          "style": "./style",
-          "config": "./config",
-          "node-modules": "./node_modules"
+          "style": "./style"
         }
       }
     ]
