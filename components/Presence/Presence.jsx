@@ -1,6 +1,6 @@
 import React from 'react';
 import idx from 'idx';
-import moment from 'moment-business-days';
+import moment from 'moment';
 
 import config from 'config.json';
 import determineElapsedTime from 'utils/elapsedTime';
@@ -37,7 +37,7 @@ export default class Presence extends React.Component {
   }
 
   _determineWorkTravelTime(sensor) {
-    const isBusinessDay = moment().isBusinessDay();
+    const isBusinessDay = ![0, 6].includes(moment().format('e'));
     const isDisplayHours = moment().isBetween(moment('02:00:00', 'hh:mm:ss'), moment('11:00:00', 'hh:mm:ss'));
     if (sensor && isBusinessDay && isDisplayHours) {
       return `${sensor.state} mins to work`;
