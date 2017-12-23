@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sidebar, Menu } from 'semantic-ui-react';
+import { Sidebar, Menu, Ref } from 'semantic-ui-react';
 
 import './ControlPanel.scss';
 
@@ -37,20 +37,32 @@ const menuItems = [
 ];
 
 export default class ControlPanel extends React.Component {
+  constructor() {
+    super();
+    this.menuItems = {};
+  }
+
+  componentDidMount() {
+    this.menuItems[this.props.activePage].scrollIntoView();
+  }
+
   render() {
     const { activePage, changePage } = this.props;
 
     const menu = menuItems.map(item => {
       return (
-        <Menu.Item
-          key={item.id}
-          name={item.id}
-          active={activePage === item.id}
-          onClick={changePage}
-        >
-          <i className={`icon mdi mdi-${item.icon}`} />
-          {item.name}
-        </Menu.Item>
+        <Ref key={item.id} innerRef={ref => this.menuItems[item.id] = ref}>
+          <Menu.Item
+            name={item.id}
+            active={activePage === item.id}
+            onClick={changePage}
+          >
+            <div>
+              <i className={`icon mdi mdi-${item.icon}`} />
+              {item.name}
+            </div>
+          </Menu.Item>
+        </Ref>
       );
     });
 

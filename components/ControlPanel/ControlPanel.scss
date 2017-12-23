@@ -15,15 +15,36 @@
   }
 
   .item {
+    font: {
+      size: 12px;
+      weight: 300;
+    }
     font-weight: 300;
-    height: 120px;
-    padding: 24px;
+    height: 80px;
     text-align: center;
     width: $sidebar-width;
 
+    & > div {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: center;
+    }
+
     i {
-      display: block;
-      font-size: 3rem !important;
+      font-size: 32px !important;
+      margin-bottom: 4px !important;
+      margin-right: 0 !important;
+
+      &.mdi-garage {
+        font-size: 42px !important;
+        margin-bottom: 0 !important;
+      }
+
+      &.mdi-water-pump {
+        font-size: 28px !important;
+      }
     }
 
     &.active {
