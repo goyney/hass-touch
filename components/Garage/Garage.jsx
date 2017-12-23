@@ -7,15 +7,13 @@ import determineElapsedTime from 'utils/elapsedTime';
 
 import './Garage.scss';
 
-const traversalTimeDefault = 12;
-
 export default class Garage extends React.Component {
   constructor() {
     super();
     this.state = {
       doorState: 'closed',
-      traversalTime: traversalTimeDefault,
-      lastChanged: false
+      lastChanged: false,
+      moving: false
     };
   }
 
@@ -25,59 +23,38 @@ export default class Garage extends React.Component {
   }
 
   _determineGarageState(entities) {
-    const garageState = idx(entities, _ => _.cover.garage_door.state);
-    const lastChanged = idx(entities, _ => _.cover.garage_door.last_changed);
-
-    this.setState({
-      lastChanged: determineElapsedTime(lastChanged)
-    });
-    console.log(garageState, lastChanged);
-  }
-
-  _doorOpen = () => {
-    let traversalTimeLeft = this.state.traversalTime;
-    if (!['closed', 'opening-stopped'].includes(this.state.doorState) && traversalTimeLeft < traversalTimeDefault) {
-      traversalTimeLeft = traversalTimeDefault - traversalTimeLeft;
-    }
-
-    this.setState({ doorState: 'opening', traversalTime: traversalTimeLeft });
-    this._startTraversalTimer();
-  }
-
-  _doorClose = () => {
-    let traversalTimeLeft = this.state.traversalTime;
-    if (!['opened', 'closing-stopped'].includes(this.state.doorState) && traversalTimeLeft < traversalTimeDefault) {
-      traversalTimeLeft = traversalTimeDefault - traversalTimeLeft;
-    }
-
-    this.setState({ doorState: 'closing', traversalTime: traversalTimeLeft });
-    this._startTraversalTimer();
-  }
-
-  _doorStop = () => {
-    this._endTraversalTimer();
-    const doorStyle = window.getComputedStyle(this.garageDoor);
-    const clipPath = doorStyle['clip-path'];
-    const transform = doorStyle.transform;
-    this.garageDoor.style['clip-path'] = clipPath;
-    this.garageDoor.style['transform'] = transform;
-    this.setState({ doorState: `${this.state.doorState}-stopped`, traversalTime: this.state.traversalTime - this.traversalElapsedTime });
-  };
-
-  _startTraversalTimer() {
-    if (!this.traversalTimer) {
-      this.traversalElapsedTime = 0;
-      this.traversalTimer = setInterval(() => {
-        this.traversalElapsedTime = this.traversalElapsedTime + .1;
-      }, 100);
+    if (entities) {
+      let garageState = idx(entities, _ => _.cover.garage_door.state);
+      const lastChanged = idx(entities, _ => _.cover.garage_door.last_changed);
+      this.setState({
+        doorState: garageState || this.state.doorState,
+        lastChanged: lastChanged ? determineElapsedTime(lastChanged) : this.state.lastChanged,
+        moving: false
+      });
     }
   }
 
-  _endTraversalTimer() {
-    if (this.traversalTimer) {
-      clearInterval(this.traversalTimer);
-      this.traversalTimer = null;
+  _doorToggle = action => () => {
+    const { connection } =  this.props;
+    const actionToDirection = {
+      open: 'up',
+      close: 'down'
+    };
+
+    if (action in actionToDirection) {
+      connection.callService('cover', `${action}_cover`);
+      this.setState({ moving: actionToDirection[action] });
     }
+  }
+
+  _prettyStateStatus() {
+    if (this.state.doorState) {
+      if (this.state.moving) {
+        return this.state.moving === 'up' ? 'opening' : 'closing';
+      }
+      return this.state.doorState;
+    }
+    return 'unknown';
   }
 
   componentWillReceiveProps(newProps) {
@@ -85,47 +62,35 @@ export default class Garage extends React.Component {
   }
 
   componentDidMount() {
-    this.garageDoor.addEventListener('transitionend', event => {
-      if (event.propertyName === 'transform') {
-        this._endTraversalTimer();
-        this.setState({ doorState: this.state.doorState.replace('ing', 'ed'), traversalTime: traversalTimeDefault });
-      }
-    });
     this._initializeGaragePanel(this.props);
   }
 
   render() {
     return (
       <Container id='garage-panel'>
-        <div className='garage-status'>
-          <svg
-            className={`garage-door door-${this.state.doorState}`}
-            xmlns='http://www.w3.org/2000/svg'
-            viewBox='0 0 24 24'
-          >
+        <div className={cx({
+          'garage-status': true,
+          [`door-${this.state.doorState}`]: true,
+          'moving-up': this.state.moving === 'up',
+          'moving-down': this.state.moving === 'down'
+        })}>
+          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
             <polyline points='22.777,23.547 19.698,23.547 19.698,9.691 4.302,9.691 4.302,23.547 1.223,23.547 1.223,6.611 12,0.453 22.777,6.611 22.777,23.547' />
-            <g
-              className={`door door-${this.state.doorState}`}
-              style={{ transitionDuration: `${this.state.traversalTime}s` }}
-              ref={door => this.garageDoor = door}
-            >
+            <g className='door' ref={door => this.garageDoor = door}>
               <rect x='5.842' y='11.188' width='12.317' height='2.464' />
               <rect x='5.842' y='14.473' width='12.317' height='2.464' />
               <rect x='5.842' y='17.758' width='12.317' height='2.464' />
               <rect x='5.842' y='21.043' width='12.317' height='2.464' />
             </g>
           </svg>
-          <h3>{this.state.doorState}</h3>
+          <h3>{this._prettyStateStatus()}</h3>
           <p>{this.state.lastChanged ? this.state.lastChanged : ''}</p>
         </div>
         <div className='garage-control'>
-          <button onClick={this._doorOpen} disabled={this.state.doorState === 'opened' || this.traversalTimer}>
+          <button onClick={this._doorToggle('open')} disabled={this.state.doorState === 'open'}>
             <i className='mdi mdi-arrow-up-bold' />
           </button>
-          <button onClick={this._doorStop} disabled={['opened', 'closed', 'opening-stopped', 'closing-stopped'].includes(this.state.doorState)}>
-            <i className='mdi mdi-stop' />
-          </button>
-          <button onClick={this._doorClose} disabled={this.state.doorState === 'closed' || this.traversalTimer}>
+          <button onClick={this._doorToggle('close')} disabled={this.state.doorState === 'closed'}>
             <i className='mdi mdi-arrow-down-bold' />
           </button>
         </div>

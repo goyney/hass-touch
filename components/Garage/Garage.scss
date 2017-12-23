@@ -13,7 +13,12 @@
   height: 300px;
   margin-right: 80px;
   padding: 25px 50px 50px;
+  position: relative;
   width: 300px;
+
+  svg {
+    fill: $white;
+  }
 
   h3, p {
     margin: 0;
@@ -22,6 +27,7 @@
 
   h3 {
     font-weight: 300;
+    text-transform: uppercase;
   }
 
   p {
@@ -32,32 +38,105 @@
   }
 }
 
-.garage-door {
-  fill: $white;
-
+.door-open, .door-closed {
   .door {
     transition: {
+      duration: 1s;
       property: all;
       timing-function: linear;
     }
   }
+}
 
-  .door-opening, .door-opened {
+.door-open {
+  .door {
     clip-path: inset(110% 0 0 0) !important;
     transform: translate(0, -14px) !important;
   }
+}
 
-  .door-closing, .door-closed {
+.door-closed {
+  .door {
     clip-path: inset(0 0 0 0) !important;
     transform: translate(0, 0) !important;
+  }
+}
+
+.moving-up, .moving-down {
+  &::after {
+    animation: pulsate 1s ease infinite;
+    color: $white;
+    font: {
+      family: 'Material Design Icons';
+      size: 120px;
+    }
+    position: absolute;
+    top: 162px;
+    left: 90px;
+  }
+}
+
+.moving-up {
+  .door {
+    fill: rgba($white, .5);
+
+    rect {
+      animation: door 1s ease infinite;
+
+      &:nth-child(2) {
+        animation-delay: .75s;
+      }
+      &:nth-child(3) {
+        animation-delay: .5s;
+      }
+      &:nth-child(4) {
+        animation-delay: .25s;
+      }
+    }
+  }
+
+  &::after {
+    content: '\F13F';
+  }
+}
+
+.moving-down {
+  &::after {
+    content: '\F13C';
   }
 }
 
 .garage-control {
   display: flex;
   flex-direction: column;
+  height: 50%;
+  justify-content: space-evenly;
 
   button {
     font-size: 42px;
+  }
+}
+
+@keyframes door {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes pulsate {
+  0% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.1, 1.1);
+  }
+  100% {
+    transform: scale(1, 1);
   }
 }
