@@ -2704,10 +2704,6 @@ mixin-deep@^1.2.0:
   dependencies:
     minimist "0.0.8"
 
-moment-business-days@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/moment-business-days/-/moment-business-days-1.0.6.tgz#9ed3e6e1270feee2c78f91f11bc750569d3bf924"
-
 moment@^2.19.3:
   version "2.20.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.20.1.tgz#d6eb1a46cbcc14a2b2f9434112c1ff8907f313fd"
