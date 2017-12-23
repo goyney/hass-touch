@@ -3,17 +3,29 @@
 .thermostat {
   user-select: none;
 
-  circle {
-    fill: $grey;
-    transition: fill .5s;
-
-    &.cooling {
+  &.cooling {
+    circle {
       fill: $blue;
     }
 
-    &.heating {
+    .ambient-temperature {
+      text-shadow: 2px 0 5px $blue, 0 2px 5px $blue, -2px 0 5px $blue, 0 -2px 5px $blue;
+    }
+  }
+
+  &.heating {
+    circle {
       fill: $orange;
     }
+
+    .ambient-temperature {
+      text-shadow: 2px 0 5px $orange, 0 2px 5px $orange, -2px 0 5px $orange, 0 -2px 5px $orange;
+    }
+  }
+
+  circle {
+    fill: $grey;
+    transition: fill .5s;
   }
 
   text {
@@ -24,11 +36,17 @@
     text-anchor: middle;
   }
 
-  .tick {
-    fill: rgba($white, .3);
+  .ticks {
+    path {
+      fill: rgba($white, .3);
 
-    &.active {
-      fill: rgba($white, .8);
+      &.active, &.fat {
+        fill: rgba($white, .7);
+      }
+
+      &.long {
+        fill: $white;
+      }
     }
   }
 
@@ -36,17 +54,56 @@
     font-size: 72px;
   }
 
+  .heat-cool {
+    .target-temperature {
+      font-size: 70px;
+    }
+  }
+
   .ambient-temperature {
     font-size: 22px;
+    text-shadow: 2px 0 5px $grey, 0 2px 5px $grey, -2px 0 5px $grey, 0 -2px 5px $grey;
+  }
+
+  .target-mode {
+    font: {
+      size: 22px;
+      weight: 100;
+    }
+    opacity: .8;
+    text-transform: uppercase;
   }
 
   .target-temperature {
     font-size: 120px;
   }
 
-  .fan {
-    fill: $white;
+  .fan, .leaf {
+    opacity: 0;
     pointer-events: none;
-    transform: translate(180px, 300px);
+    transition: opacity 1s ease-in;
+
+    &.on {
+      opacity: 1;
+    }
+  }
+
+  .fan {
+    animation: spin 2s infinite linear;
+    fill: $white;
+    transform-origin: 50% 50%;
+  }
+
+  .leaf {
+    fill: $green;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
