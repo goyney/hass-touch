@@ -1,0 +1,52 @@
+@import '../../style/variables';
+
+.thermostat {
+  user-select: none;
+
+  circle {
+    fill: $grey;
+    transition: fill .5s;
+
+    &.cooling {
+      fill: $blue;
+    }
+
+    &.heating {
+      fill: $orange;
+    }
+  }
+
+  text {
+    alignment-baseline: central;
+    fill: $white;
+    font-weight: 500;
+    pointer-events: none;
+    text-anchor: middle;
+  }
+
+  .tick {
+    fill: rgba($white, .3);
+
+    &.active {
+      fill: rgba($white, .8);
+    }
+  }
+
+  .away-mode {
+    font-size: 72px;
+  }
+
+  .ambient-temperature {
+    font-size: 22px;
+  }
+
+  .target-temperature {
+    font-size: 120px;
+  }
+
+  .fan {
+    fill: $white;
+    pointer-events: none;
+    transform: translate(180px, 300px);
+  }
+}
