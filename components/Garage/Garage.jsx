@@ -65,6 +65,10 @@ export default class Garage extends React.Component {
     this._initializeGaragePanel(this.props);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return JSON.stringify(this.state) !== JSON.stringify(nextState);
+  }
+
   render() {
     return (
       <Container id='garage-panel'>
