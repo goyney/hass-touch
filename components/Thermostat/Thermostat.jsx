@@ -53,16 +53,23 @@ export default class Thermostat extends React.Component {
   _renderTicks() {
     return new Array(this.tickCount).fill('').map((x, i) => {
       let isActive, isLong, isFat;
-      if (this.props.mode === 'heat-cool') {
+      if (this.props.mode === 'off') {
+        isActive = i === this.props.ambientTemperature;
+        isLong = false;
+        isFat = i === this.props.ambientTemperature;
+      } else if (this.props.mode === 'heat-cool') {
         isActive = i >= this.props.targetTemperature[0] && i <= this.props.targetTemperature[1];
-        isLong = this.props.targetTemperature.includes(i);
-        isFat = false;
+        isLong = this.props.targetTemperature.includes(i) || i === this.props.ambientTemperature;
+        isFat = i === this.props.ambientTemperature;
       } else {
         isActive = i <= this.props.ambientTemperature && i >= this.props.targetTemperature[0];
         isLong = i === this.props.targetTemperature[0];
-        isFat = i === this.props.ambientTemperature
+        isFat = i === this.props.ambientTemperature;
       }
-      const modifiers = isFat ? [ 3.5, 0 ] : isLong ? [ 3.5, 20 ] : [ 0, 0 ];
+
+      const modifiers = [];
+      modifiers.push(isFat || isLong ? 3.5 : 0);
+      modifiers.push(isLong ? 20 : 0);
 
       return (
         <path
@@ -79,31 +86,39 @@ export default class Thermostat extends React.Component {
   }
 
   _renderAmbientPosition() {
-    if (this.props.mode !== 'heat-cool') {
-      const labelPosition = [ this.radius, this.ticksOuterRadius - (this.ticksOuterRadius - this.ticksInnerRadius) / 2 ];
-      const maxValue = this._restrictToRange(this.props.ambientTemperature, this.minValue, this.maxValue);
-      let angle = this.tickDegrees * (maxValue - this.minValue) / this.rangeValue - this.offsetDegrees;
-      if (maxValue > this.props.targetTemperature[0]) {
-        angle += 13;
-      } else {
-        angle -= 15;
-      }
-      const position = this._rotatePoint(labelPosition, angle);
+    const labelPosition = [ this.radius, this.ticksOuterRadius - (this.ticksOuterRadius - this.ticksInnerRadius) / 2 ];
+    const maxValue = this._restrictToRange(this.props.ambientTemperature, this.minValue, this.maxValue);
+    let angle = this.tickDegrees * (maxValue - this.minValue) / this.rangeValue - this.offsetDegrees;
+    if (maxValue > this.props.targetTemperature[0]) {
+      angle += 8;
+    } else {
+      angle -= 17;
+    }
+    const position = this._rotatePoint(labelPosition, angle);
 
-      return (
+    return (
+      <g>
+        <text className='ambient-temperature-stroke' x={position[0]} y={position[1]}>
+          {Math.round(this.props.ambientTemperature)}
+        </text>
         <text className='ambient-temperature' x={position[0]} y={position[1]}>
           {Math.round(this.props.ambientTemperature)}
         </text>
-      );
-    }
+      </g>
+
+    );
   }
 
   _renderCurrentStatus() {
+    if (this.props.mode === 'off') {
+      return <text className='away-mode' x={this.radius} y={this.radius}>OFF</text>;
+    }
+
     if (this.props.away) {
       return <text className='away-mode' x={this.radius} y={this.radius}>AWAY</text>;
     }
 
-    const status = this.props.mode === 'heat-cool' ? 'HEAT • COOL' : this.props.state !== 'off' ? this.props.state : `${this.props.mode} SET TO`;
+    const status = this.props.mode === 'heat-cool' ? 'COOL • HEAT' : this.props.state !== 'off' ? this.props.state : `${this.props.mode} SET TO`;
     const targetTemperature = this.props.targetTemperature.map(temp => Math.round(temp));
     return (
       <g className={cx({ 'heat-cool': this.props.mode === 'heat-cool' })}>

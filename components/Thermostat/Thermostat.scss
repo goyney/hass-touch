@@ -8,8 +8,8 @@
       fill: $blue;
     }
 
-    .ambient-temperature {
-      text-shadow: 2px 0 5px $blue, 0 2px 5px $blue, -2px 0 5px $blue, 0 -2px 5px $blue;
+    .ambient-temperature-stroke {
+      fill: $blue;
     }
   }
 
@@ -18,8 +18,8 @@
       fill: $orange;
     }
 
-    .ambient-temperature {
-      text-shadow: 2px 0 5px $orange, 0 2px 5px $orange, -2px 0 5px $orange, 0 -2px 5px $orange;
+    .ambient-temperature-stroke {
+      fill: $orange;
     }
   }
 
@@ -62,7 +62,13 @@
 
   .ambient-temperature {
     font-size: 22px;
-    text-shadow: 2px 0 5px $grey, 0 2px 5px $grey, -2px 0 5px $grey, 0 -2px 5px $grey;
+  }
+
+  .ambient-temperature-stroke {
+    fill: $grey;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -3px;
   }
 
   .target-mode {

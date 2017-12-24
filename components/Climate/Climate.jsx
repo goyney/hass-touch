@@ -1,5 +1,6 @@
 import React from 'react';
 import idx from 'idx';
+import cx from 'classnames';
 import { Container, Dropdown } from 'semantic-ui-react';
 import Thermostat from 'Thermostat/Thermostat';
 
@@ -33,6 +34,7 @@ export default class Climate extends React.Component {
       operationMode: idx(entities, _ => _.sensor.entryway_thermostat_operation_mode.state),
       currentTemperature: current_temperature,
       targetTemperature: !temperature ? [ target_temp_low, target_temp_high ] : [ temperature ],
+      outsideTemperature: Math.round(idx(entities, _ => _.sensor.dark_sky_temperature.state)),
       insideHumidity: idx(entities, _ => _.sensor.entryway_thermostat_humidity.state)
     });
   }
@@ -43,19 +45,48 @@ export default class Climate extends React.Component {
       options.push({
         key: mode,
         value: mode,
-        text: <div className={`mode-option ${mode}`}>{air}<p>{mode.replace('-', ' • ')}</p></div>
+        text: <div className={`mode-option ${mode}`}>{air}<p>{mode.replace('heat-cool', 'Cool • Heat')}</p></div>
       });
       return options;
     }, []);
 
-    console.log(this.state.operationMode);
+    if (this.state.operationMode) {
+      return <Dropdown
+        className='set-hvac-state'
+        header='Set thermostat to:'
+        defaultValue={this.state.operationMode}
+        options={options}
+        upward
+        onChange={(e, value) => {
+          console.log('VALUE', value.value);
+        }}
+      />;
+    }
+  }
 
-    return <Dropdown
-      upward
-      header='Set thermostat to:'
-      value={this.state.operationMode || 'off'}
-      options={options}
-    />;
+  _generateTemperatureButtonGroup(mode, hideHeading = false) {
+    return (
+      <div className='control-buttons'>
+        {!hideHeading && <h3>{mode}</h3>}
+        <button>
+          <i className='mdi mdi-arrow-up-bold' />
+        </button>
+        <button>
+          <i className='mdi mdi-arrow-down-bold' />
+        </button>
+      </div>
+    );
+  }
+
+  _generateTemperatureControlButtons() {
+    const buttons = [];
+    if (this.state.operationMode === 'heat-cool') {
+      buttons.push(this._generateTemperatureButtonGroup('cool'));
+      buttons.push(this._generateTemperatureButtonGroup('heat'));
+    } else if (this.state.operationMode !== 'off') {
+      buttons.push(this._generateTemperatureButtonGroup(this.state.operationMode, true));
+    }
+    return <div className='temperature-controls'>{buttons}</div>;
   }
 
   componentWillReceiveProps(newProps) {
@@ -66,9 +97,9 @@ export default class Climate extends React.Component {
     this._initializeClimatePanel(this.props);
   }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return JSON.stringify(this.state) !== JSON.stringify(nextState);
-  // }
+  shouldComponentUpdate(nextProps, nextState) {
+    return JSON.stringify(this.state) !== JSON.stringify(nextState);
+  }
 
   render() {
     return (
@@ -84,18 +115,28 @@ export default class Climate extends React.Component {
             leaf={this.state.leaf}
           />
           <div className='thermostat-stats'>
-            <p>
-              <i className='mdi mdi-thermometer' />
-              {this.state.currentTemperature}&deg;
-            </p>
-            <p>
-              <i className='mdi mdi-water-percent' />
-              {this.state.insideHumidity}%
-            </p>
+            <div>
+              <p>{this.state.insideHumidity}%</p>
+              <label>Inside Humidity</label>
+            </div>
+            <div>
+              <p>{this.state.outsideTemperature}&deg;</p>
+              <label>Outside Temp.</label>
+            </div>
           </div>
         </div>
         <div className='thermostat-controls'>
-          {this._generateModeMenu()}
+          {this._generateTemperatureControlButtons()}
+          <div className='mode-fan'>
+            {this._generateModeMenu()}
+            <button className='set-fan-mode'>
+              <i className={cx({
+                mdi: true,
+                'mdi-fan': !this.state.fan,
+                'mdi-fan-off': this.state.fan
+              })} />
+            </button>
+          </div>
         </div>
       </Container>
     );
