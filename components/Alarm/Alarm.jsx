@@ -66,7 +66,7 @@ export default class Alarm extends React.Component {
       off: 'alarm_disarm',
       away: 'alarm_arm_away',
       stay: 'alarm_arm_home',
-      chime: 'alarm_toggle_chime'
+      chime: 'alarmdecoder_alarm_toggle_chime'
     };
 
     if (this.state.currentInput.length === 4 && Object.keys(actionToService).includes(command)) {
