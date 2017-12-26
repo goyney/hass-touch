@@ -189,6 +189,10 @@ export default class Alarm extends React.Component {
     this._initializeAlarmPanel(this.props);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.status !== nextState.status;
+  }
+
   render() {
     const { entities } = this.props;
     const chime = idx(entities, _ => _.alarm_control_panel.alarm_panel.attributes.chime);

@@ -6,7 +6,6 @@ import './Loading.scss';
 export default class Loading extends React.Component {
   render() {
     const { className } = this.props;
-
     return (
       <div className={cx({ initializing: true, [className]: true })}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">

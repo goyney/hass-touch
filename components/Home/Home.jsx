@@ -30,9 +30,7 @@ export default class Home extends React.Component {
         </div>
         <Presence
           className='presence-container'
-          binarySensors={entities.binary_sensor}
-          devices={entities.device_tracker}
-          sensors={entities.sensor}
+          entities={entities}
         />
       </Container>
     );

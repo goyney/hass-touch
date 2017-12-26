@@ -8,21 +8,37 @@ import determineElapsedTime from 'utils/elapsedTime';
 import './Presence.scss';
 
 export default class Presence extends React.Component {
-  _curatePresence() {
-    const { devices = {}, binarySensors = {}, sensors = {} } = this.props;
+  constructor() {
+    super();
+    this.state = {
+      monitoredDevices: {}
+    };
+  }
 
+  _initializePresence(props) {
+    const { entities } = props;
+    this._determinePresence(entities);
+  }
+
+  _determinePresence(entities) {
     if (config.presence) {
-      return Object.keys(devices).reduce((monitoredDevices, deviceId) => {
+      const devices = idx(entities, _ => _.device_tracker) || {};
+      const data = {
+        binarySensors: idx(entities, _ => _.binary_sensor) || {},
+        sensors: idx(entities, _ => _.sensor) || {}
+      };
+
+      const monitoredDevices = Object.keys(devices).reduce((monitoredDevices, deviceId) => {
         if (config.presence.devices && deviceId.startsWith(config.presence.devices.prefix)) {
           const deviceName = deviceId.split(config.presence.devices.prefix)[1];
           const monitoredEntities = {};
-          ['binarySensors', 'sensors'].forEach((entity) => {
+          Object.keys(data).forEach(entity => {
             monitoredEntities[entity] = {};
             if (config.presence[entity] && Object.keys(config.presence[entity]).length > 0) {
               monitoredEntities[entity] = Object.keys(config.presence[entity]).reduce((entities, entityId) => {
                 const entityName = `${config.presence[entity][entityId].prefix || ''}${deviceName}${config.presence[entity][entityId].suffix || ''}`;
-                if (entityName in this.props[entity]) {
-                  entities[entityId] = this.props[entity][entityName];
+                if (entityName in data[entity]) {
+                  entities[entityId] = data[entity][entityName];
                 }
                 return entities;
               }, {});
@@ -32,8 +48,8 @@ export default class Presence extends React.Component {
         }
         return monitoredDevices;
       }, {});
+      this.setState({ monitoredDevices });
     }
-    return {};
   }
 
   _determineWorkTravelTime(sensor) {
@@ -64,12 +80,11 @@ export default class Presence extends React.Component {
     }
   }
 
-  _displayFamilyPresence() {
-    const family = this._curatePresence();
-    return Object.keys(family).map(member => {
-      const name = family[member].device.attributes.friendly_name;
-      const icon = `http${config.hass.ssl ? 's' : ''}://${config.hass.basePath}${family[member].device.attributes.icon}`;
-      const status = this._determineMemberStatus(family[member]);
+  _renderPresence() {
+    return Object.keys(this.state.monitoredDevices).map(member => {
+      const name = this.state.monitoredDevices[member].device.attributes.friendly_name;
+      const icon = `http${config.hass.ssl ? 's' : ''}://${config.hass.basePath}${this.state.monitoredDevices[member].device.attributes.icon}`;
+      const status = this._determineMemberStatus(this.state.monitoredDevices[member]);
 
       return (
         <div key={member}>
@@ -86,9 +101,20 @@ export default class Presence extends React.Component {
     });
   }
 
+  componentWillReceiveProps(newProps) {
+    this._initializePresence(newProps);
+  }
+
+  componentDidMount() {
+    this._initializePresence(this.props);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return JSON.stringify(this.state) !== JSON.stringify(nextState);
+  }
+
   render() {
     const { className } = this.props;
-
-    return <div className={className}>{this._displayFamilyPresence()}</div>;
+    return <div className={className}>{this._renderPresence()}</div>;
   }
 }
