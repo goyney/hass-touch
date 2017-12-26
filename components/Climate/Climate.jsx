@@ -45,7 +45,7 @@ export default class Climate extends React.Component {
       options.push({
         key: mode,
         value: mode,
-        text: <div className={`mode-option ${mode}`}>{air}<p>{mode.replace('heat-cool', 'Cool • Heat')}</p></div>
+        text: <div key={mode} className={`mode-option ${mode}`}>{air}<p>{mode.replace('heat-cool', 'Cool • Heat')}</p></div>
       });
       return options;
     }, []);
@@ -66,12 +66,12 @@ export default class Climate extends React.Component {
 
   _generateTemperatureButtonGroup(mode, hideHeading = false) {
     return (
-      <div className='control-buttons'>
+      <div key={`${mode}-controls`} className='control-buttons'>
         {!hideHeading && <h3>{mode}</h3>}
-        <button>
+        <button key={`${mode}-up`}>
           <i className='mdi mdi-arrow-up-bold' />
         </button>
-        <button>
+        <button key={`${mode}-down`}>
           <i className='mdi mdi-arrow-down-bold' />
         </button>
       </div>

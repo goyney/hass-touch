@@ -31,15 +31,15 @@ export default class Thermostat extends React.Component {
     return points.map(point => this._rotatePoint(point, angle));
   }
 
-  _restrictToRange(val, min, max) {
-    if (val < min) {
-      return min;
-    }
-    if (val > max) {
-      return max;
-    }
-    return val;
-  }
+  // _restrictToRange(val, min, max) {
+  //   if (val < min) {
+  //     return min;
+  //   }
+  //   if (val > max) {
+  //     return max;
+  //   }
+  //   return val;
+  // }
 
   _calculateTickSize(widthModifier = 0, lengthModifier = 0) {
     return [
@@ -59,7 +59,7 @@ export default class Thermostat extends React.Component {
         isFat = i === this.props.ambientTemperature;
       } else if (this.props.mode === 'heat-cool') {
         isActive = i >= this.props.targetTemperature[0] && i <= this.props.targetTemperature[1];
-        isLong = this.props.targetTemperature.includes(i) || i === this.props.ambientTemperature;
+        isLong = this.props.targetTemperature.includes(i);
         isFat = i === this.props.ambientTemperature;
       } else {
         isActive = i <= this.props.ambientTemperature && i >= this.props.targetTemperature[0];
@@ -87,12 +87,13 @@ export default class Thermostat extends React.Component {
 
   _renderAmbientPosition() {
     const labelPosition = [ this.radius, this.ticksOuterRadius - (this.ticksOuterRadius - this.ticksInnerRadius) / 2 ];
-    const maxValue = this._restrictToRange(this.props.ambientTemperature, this.minValue, this.maxValue);
-    let angle = this.tickDegrees * (maxValue - this.minValue) / this.rangeValue - this.offsetDegrees;
-    if (maxValue > this.props.targetTemperature[0]) {
+    // const maxValue = this._restrictToRange(this.props.ambientTemperature, this.minValue, this.maxValue);
+    let angle = this.props.ambientTemperature * this.ticksTheta - this.offsetDegrees;
+    // console.log(maxValue);
+    if (this.props.ambientTemperature > this.props.targetTemperature[0]) {
       angle += 8;
     } else {
-      angle -= 17;
+      angle -= 8;
     }
     const position = this._rotatePoint(labelPosition, angle);
 

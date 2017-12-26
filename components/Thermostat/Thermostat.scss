@@ -9,7 +9,8 @@
     }
 
     .ambient-temperature-stroke {
-      fill: $blue;
+      stroke: $blue;
+      transition: stroke .5s;
     }
   }
 
@@ -19,7 +20,8 @@
     }
 
     .ambient-temperature-stroke {
-      fill: $orange;
+      stroke: $orange;
+      transition: stroke .5s;
     }
   }
 
@@ -65,10 +67,9 @@
   }
 
   .ambient-temperature-stroke {
-    fill: $grey;
-    font-size: 30px;
-    font-weight: 800;
-    letter-spacing: -3px;
+    font-size: 22px;
+    stroke: $grey;
+    stroke-width: 8px;
   }
 
   .target-mode {
