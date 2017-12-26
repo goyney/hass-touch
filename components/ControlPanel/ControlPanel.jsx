@@ -46,6 +46,10 @@ export default class ControlPanel extends React.Component {
     this.menuItems[this.props.activePage].scrollIntoView();
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.props.activePage !== nextProps.activePage;
+  }
+
   render() {
     const { activePage, changePage } = this.props;
 
