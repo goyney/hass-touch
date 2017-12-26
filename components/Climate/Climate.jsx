@@ -48,7 +48,7 @@ export default class Climate extends React.Component {
       options.push({
         key: mode,
         value: mode,
-        text: <div key={mode} className={`mode-option ${mode}`}>{air}<p>{mode.replace('heat-cool', 'Cool • Heat')}</p></div>
+        text: <div key={mode} className={`mode-option ${mode}`}>{air}<p>{mode.replace('-', ' • ')}</p></div>
       });
       return options;
     }, []);
@@ -84,8 +84,8 @@ export default class Climate extends React.Component {
   _generateTemperatureControlButtons() {
     const buttons = [];
     if (this.state.operationMode === 'heat-cool') {
-      buttons.push(this._generateTemperatureButtonGroup('cool'));
       buttons.push(this._generateTemperatureButtonGroup('heat'));
+      buttons.push(this._generateTemperatureButtonGroup('cool'));
     } else if (this.state.operationMode !== 'off') {
       buttons.push(this._generateTemperatureButtonGroup(this.state.operationMode, true));
     }

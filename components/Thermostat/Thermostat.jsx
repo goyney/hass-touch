@@ -107,7 +107,7 @@ export default class Thermostat extends React.Component {
       return <text className='away-mode' x={this.radius} y={this.radius}>AWAY</text>;
     }
 
-    const status = this.props.mode === 'heat-cool' ? 'COOL • HEAT' : this.props.state !== 'off' ? this.props.state : `${this.props.mode} SET TO`;
+    const status = this.props.mode === 'heat-cool' ? 'HEAT • COOL' : this.props.state !== 'off' ? this.props.state : `${this.props.mode} SET TO`;
     const targetTemperature = this.props.targetTemperature.map(temp => Math.round(temp));
     return (
       <g className={cx({ 'heat-cool': this.props.mode === 'heat-cool' })}>
