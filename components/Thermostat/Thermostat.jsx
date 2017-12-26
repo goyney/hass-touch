@@ -31,16 +31,6 @@ export default class Thermostat extends React.Component {
     return points.map(point => this._rotatePoint(point, angle));
   }
 
-  // _restrictToRange(val, min, max) {
-  //   if (val < min) {
-  //     return min;
-  //   }
-  //   if (val > max) {
-  //     return max;
-  //   }
-  //   return val;
-  // }
-
   _calculateTickSize(widthModifier = 0, lengthModifier = 0) {
     return [
       [ this.radius - (1 + widthModifier), this.ticksOuterRadius ],
@@ -87,9 +77,7 @@ export default class Thermostat extends React.Component {
 
   _renderAmbientPosition() {
     const labelPosition = [ this.radius, this.ticksOuterRadius - (this.ticksOuterRadius - this.ticksInnerRadius) / 2 ];
-    // const maxValue = this._restrictToRange(this.props.ambientTemperature, this.minValue, this.maxValue);
     let angle = this.props.ambientTemperature * this.ticksTheta - this.offsetDegrees;
-    // console.log(maxValue);
     if (this.props.ambientTemperature > this.props.targetTemperature[0]) {
       angle += 8;
     } else {
