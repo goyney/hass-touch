@@ -26,19 +26,20 @@ export default class Alarm extends React.Component {
     const panelState = idx(entities, _ => _.sensor.alarm_panel_display.state) || '';
     const systemState = idx(entities, _ => _.alarm_control_panel.alarm_panel.state);
     const systemReady = idx(entities, _ => _.alarm_control_panel.alarm_panel.attributes.ready);
+    const chime = idx(entities, _ => _.alarm_control_panel.alarm_panel.attributes.chime);
 
     if (systemState === 'triggered') {
-      this.setState({ status: systemState });
+      this.setState({ status: systemState, chime });
     } else if (systemState === 'disarmed') {
-      this.setState({ status: systemReady ? 'ready' : 'not_ready' });
+      this.setState({ status: systemReady ? 'ready' : 'not_ready', chime });
     } else if (panelState.includes('DISARM SYSTEM')) {
-      this.setState({ status: 'disarm_now' });
+      this.setState({ status: 'disarm_now', chime });
       this._startDisarmDelay();
     } else if (panelState.includes('You may exit now')) {
-      this.setState({ status: `${systemState}_exit_now` });
+      this.setState({ status: `${systemState}_exit_now`, chime });
       this._startExitDelay();
     } else {
-      this.setState({ status: systemState });
+      this.setState({ status: systemState, chime });
     }
   }
 
@@ -61,7 +62,7 @@ export default class Alarm extends React.Component {
   }
 
   _sendCommand(command) {
-    const { connection } =  this.props;
+    const { connection } = this.props;
     const actionToService = {
       off: 'alarm_disarm',
       away: 'alarm_arm_away',
@@ -190,13 +191,10 @@ export default class Alarm extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.status !== nextState.status;
+    return this.state.status !== nextState.status || this.state.chime !== nextState.chime;
   }
 
   render() {
-    const { entities } = this.props;
-    const chime = idx(entities, _ => _.alarm_control_panel.alarm_panel.attributes.chime);
-
     return (
       <Container id='alarm-panel'>
         <header>
@@ -208,7 +206,7 @@ export default class Alarm extends React.Component {
             {this._generateButtons([
               {
                 name: 'chime',
-                icon: `mdi-bell${!chime ? '-off' : ''}`,
+                icon: `mdi-bell${!this.state.chime ? '-off' : ''}`,
                 disabled: !['ready', 'not_ready'].includes(this.state.status)
               }
             ])}

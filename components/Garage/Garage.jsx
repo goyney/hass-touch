@@ -19,19 +19,16 @@ export default class Garage extends React.Component {
 
   _initializeGaragePanel(props) {
     const { entities } = props;
-    this._determineGarageState(entities);
-  }
+    const doorState = idx(entities, _ => _.cover.garage_door.state);
+    const lastChanged = idx(entities, _ => _.cover.garage_door.last_changed);
+    const lastUpdated = idx(entities, _ => _.cover.garage_door.last_updated);
 
-  _determineGarageState(entities) {
-    if (entities) {
-      let garageState = idx(entities, _ => _.cover.garage_door.state);
-      const lastChanged = idx(entities, _ => _.cover.garage_door.last_changed);
-      this.setState({
-        doorState: garageState || this.state.doorState,
-        lastChanged: lastChanged ? determineElapsedTime(lastChanged) : this.state.lastChanged,
-        moving: false
-      });
-    }
+    this.setState({
+      lastUpdated,
+      doorState,
+      lastChanged: lastChanged ? determineElapsedTime(lastChanged) : undefined,
+      moving: false
+    });
   }
 
   _doorToggle = action => () => {
@@ -66,7 +63,7 @@ export default class Garage extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return JSON.stringify(this.state) !== JSON.stringify(nextState);
+    return this.state.lastUpdated !== nextState.lastUpdated;
   }
 
   render() {

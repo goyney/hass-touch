@@ -10,7 +10,6 @@ import './Home.scss';
 export default class Home extends React.Component {
   render() {
     const { entities } = this.props;
-
     return (
       <Container id='home-panel'>
         <div className='time-weather'>
@@ -25,13 +24,10 @@ export default class Home extends React.Component {
           </div>
           <div className='current-time-weather'>
             <Moment className='current-time' format='h:mm' interval={1000} />
-            <Weather className='current-weather' sensors={entities.sensor} />
+            <Weather className='current-weather' entities={entities} />
           </div>
         </div>
-        <Presence
-          className='presence-container'
-          entities={entities}
-        />
+        <Presence className='presence-container' entities={entities} />
       </Container>
     );
   }

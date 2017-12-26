@@ -17,10 +17,6 @@ export default class Presence extends React.Component {
 
   _initializePresence(props) {
     const { entities } = props;
-    this._determinePresence(entities);
-  }
-
-  _determinePresence(entities) {
     if (config.presence) {
       const devices = idx(entities, _ => _.device_tracker) || {};
       const data = {

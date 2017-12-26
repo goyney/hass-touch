@@ -18,6 +18,8 @@ export default class Climate extends React.Component {
 
   _initializeClimatePanel(props) {
     const { entities } = props;
+    const lastUpdated = idx(entities, _ => _.climate.entryway.last_updated);
+
     const {
       away_mode,
       current_temperature,
@@ -27,6 +29,7 @@ export default class Climate extends React.Component {
     } = idx(entities, _ => _.climate.entryway.attributes) || {};
 
     this.setState({
+      lastUpdated,
       away: away_mode === 'on',
       leaf: idx(entities, _ => _.binary_sensor.entryway_thermostat_has_leaf.state) === 'on' || false,
       fan: idx(entities, _ => _.binary_sensor.entryway_thermostat_fan.state) === 'on' || false,
@@ -89,6 +92,12 @@ export default class Climate extends React.Component {
     return <div className='temperature-controls'>{buttons}</div>;
   }
 
+  _toggleFan = () => {
+    const { connection } = this.props;
+    connection.callService('climate', 'set_fan_mode', { fan_mode: this.state.fan === 'on' ? false : true })
+      .then(() => this.setState({ fan: !this.state.fan }));
+  }
+
   componentWillReceiveProps(newProps) {
     this._initializeClimatePanel(newProps);
   }
@@ -98,7 +107,7 @@ export default class Climate extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return JSON.stringify(this.state) !== JSON.stringify(nextState);
+    return this.state.lastUpdated !== nextState.lastUpdated;
   }
 
   render() {
@@ -129,7 +138,10 @@ export default class Climate extends React.Component {
           {this._generateTemperatureControlButtons()}
           <div className='mode-fan'>
             {this._generateModeMenu()}
-            <button className='set-fan-mode'>
+            <button
+              className='set-fan-mode'
+              onClick={this._toggleFan}
+            >
               <i className={cx({
                 mdi: true,
                 'mdi-fan': !this.state.fan,
