@@ -127,13 +127,10 @@ export default class Thermostat extends React.Component {
     this.diameter = 400;
     this.tickCount = 100;
     this.tickDegrees = 300;
-    this.minValue = 50;
-    this.maxValue = 85;
     this.radius = this.diameter / 2;
     this.ticksOuterRadius = this.diameter / 50;
     this.ticksInnerRadius = this.diameter / 7;
     this.ticksTheta = this.tickDegrees / this.tickCount;
-    this.rangeValue = this.maxValue - this.minValue;
     this.offsetDegrees = 180 - (360 - this.tickDegrees) / 2;
   }
 
