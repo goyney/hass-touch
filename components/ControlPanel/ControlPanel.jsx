@@ -30,6 +30,11 @@ const menuItems = [
     icon: 'garage'
   },
   {
+    id: 'music',
+    name: 'Music',
+    icon: 'music-note'
+  },
+  {
     id: 'irrigation',
     name: 'Irrigation',
     icon: 'water-pump'

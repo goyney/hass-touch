@@ -11,9 +11,10 @@ import Notifications from 'Notifications/Notifications';
 import Home from 'Home/Home';
 import Alarm from 'Alarm/Alarm';
 import Climate from 'Climate/Climate';
-import Garage from 'Garage/Garage';
-import Irrigation from 'Irrigation/Irrigation';
 import Lights from 'Lights/Lights';
+import Garage from 'Garage/Garage';
+import Music from 'Music/Music';
+import Irrigation from 'Irrigation/Irrigation';
 
 import '../../node_modules/mdi/css/materialdesignicons.min.css';
 import '../../node_modules/semantic-ui-css/semantic.min.css';
@@ -26,6 +27,7 @@ const pages = {
   climate: Climate,
   lights: Lights,
   garage: Garage,
+  music: Music,
   irrigation: Irrigation
 };
 
