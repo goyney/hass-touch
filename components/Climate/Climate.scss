@@ -42,10 +42,12 @@
   flex-direction: column;
   height: 100%;
   justify-content: center;
+  min-width: 285px;
   padding-left: 2rem;
 
   .temperature-controls {
     display: flex;
+    min-height: 245px;
   }
 
   .mode-fan {
@@ -63,6 +65,7 @@
     color: rgba($white, .5);
     font-weight: 200;
     margin-bottom: 4px;
+    min-height: 23px;
     text-align: center;
     text-transform: uppercase;
   }

@@ -60,9 +60,7 @@ export default class Climate extends React.Component {
         defaultValue={this.state.operationMode}
         options={options}
         upward
-        onChange={(e, value) => {
-          console.log('VALUE', value.value);
-        }}
+        onChange={(e, value) => this._updateMode(value.value)}
       />;
     }
   }
@@ -70,13 +68,17 @@ export default class Climate extends React.Component {
   _generateTemperatureButtonGroup(mode, hideHeading = false) {
     return (
       <div key={`${mode}-controls`} className='control-buttons'>
-        {!hideHeading && <h3>{mode}</h3>}
-        <button key={`${mode}-up`}>
-          <i className='mdi mdi-arrow-up-bold' />
-        </button>
-        <button key={`${mode}-down`}>
-          <i className='mdi mdi-arrow-down-bold' />
-        </button>
+        <h3>{!hideHeading ? mode : ''}</h3>
+        {['up', 'down'].map(direction => {
+          return (
+            <button
+              key={`${mode}-${direction}`}
+              onClick={() => this._updateTemperature(mode, direction)}
+            >
+              <i className={`mdi mdi-arrow-${direction}-bold`} />
+            </button>
+          );
+        })}
       </div>
     );
   }
@@ -94,12 +96,68 @@ export default class Climate extends React.Component {
 
   _toggleFan = () => {
     const { connection } = this.props;
-    connection.callService('climate', 'set_fan_mode', { fan_mode: this.state.fan === true ? 'off' : 'on' })
-      .then(() => this.setState({ fan: !this.state.fan }));
+    const fanState = this.state.fan;
+    this.setState({ fan: !fanState, lastUpdated: Date.now() });
+    connection.callService('climate', 'set_fan_mode', { fan_mode: fanState === true ? 'off' : 'on' });
   }
 
+  _updateTemperature = (mode, direction) => {
+    if (this.state.operationMode === 'heat-cool') {
+      const heatModifier = mode === 'heat' ? direction === 'up' ? 1 : -1 : 0;
+      const coolModifier = mode === 'cool' ? direction === 'up' ? 1 : -1 : 0;
+      const heatTemp = this.state.targetTemperature[0] + heatModifier;
+      const coolTemp = this.state.targetTemperature[this.state.targetTemperature.length - 1] + coolModifier;
+
+      if (heatTemp < 55 || coolTemp > 85 || heatTemp === coolTemp - 2 || coolTemp === heatTemp + 2) {
+        return;
+      }
+
+      this.setState({
+        targetTemperature: [ heatTemp, coolTemp ],
+        lastUpdated: Date.now()
+      });
+      connection.callService('climate', 'set_temperature', {
+        target_temp_high: heatTemp,
+        target_temp_low: coolTemp
+      });
+    } else {
+      const modifier = direction === 'up' ? 1 : -1;
+      const temperature = this.state.targetTemperature[mode === 'heat' ? 0 : this.state.targetTemperature.length - 1] + modifier;
+
+      if (temperature < 55 || temperature > 85) {
+        return;
+      }
+
+      this.setState({ targetTemperature: [ temperature ], lastUpdated: Date.now() });
+      connection.callService('climate', 'set_temperature', { temperature });
+    }
+  }
+
+  _updateMode = mode => {
+    const targetTemperature = this.state.targetTemperature;
+    if (mode === 'heat-cool' && targetTemperature.length === 1) {
+      if (this.state.operationMode === 'cool') {
+        targetTemperature.unshift(targetTemperature[0] - 3);
+      }
+      if (this.state.operationMode === 'heat') {
+        targetTemperature.push(targetTemperature[0] + 3);
+      }
+    }
+
+    this.setState({ operationMode: mode, targetTemperature, lastUpdated: Date.now() });
+    connection.callService('climate', 'set_operation_mode', { operation_mode: mode });
+    connection.callService('climate', 'set_temperature', {
+      target_temp_high: targetTemperature[0],
+      target_temp_low: targetTemperature[1]
+    });
+  };
+
   componentWillReceiveProps(newProps) {
-    this._initializeClimatePanel(newProps);
+    const thisLastUpdated = idx(this.props.entities, _ => _.climate.entryway.last_updated)
+    const nextLastUpdated = idx(newProps.entities, _ => _.climate.entryway.last_updated);
+    if (thisLastUpdated !== nextLastUpdated) {
+      this._initializeClimatePanel(newProps);
+    }
   }
 
   componentDidMount() {

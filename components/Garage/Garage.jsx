@@ -39,8 +39,8 @@ export default class Garage extends React.Component {
     };
 
     if (action in actionToDirection) {
-      connection.callService('cover', `${action}_cover`);
-      this.setState({ moving: actionToDirection[action] });
+      connection.callService('cover', `${action}_cover`)
+        .then(() => this.setState({ moving: actionToDirection[action] }));
     }
   }
 

@@ -51,9 +51,13 @@ export default class Thermostat extends React.Component {
         isActive = i >= this.props.targetTemperature[0] && i <= this.props.targetTemperature[1];
         isLong = this.props.targetTemperature.includes(i);
         isFat = i === this.props.ambientTemperature;
-      } else {
-        isActive = i <= this.props.ambientTemperature && i >= this.props.targetTemperature[0];
+      } else if (this.props.mode === 'heat') {
+        isActive = (i <= this.props.ambientTemperature && i >= this.props.targetTemperature[0] || i >= this.props.ambientTemperature && i <= this.props.targetTemperature[0]);
         isLong = i === this.props.targetTemperature[0];
+        isFat = i === this.props.ambientTemperature;
+      } else {
+        isActive = (i <= this.props.ambientTemperature && i >= this.props.targetTemperature[this.props.targetTemperature.length - 1] || i >= this.props.ambientTemperature && i <= this.props.targetTemperature[this.props.targetTemperature.length - 1]);
+        isLong = i === this.props.targetTemperature[this.props.targetTemperature.length - 1];
         isFat = i === this.props.ambientTemperature;
       }
 
@@ -69,7 +73,7 @@ export default class Thermostat extends React.Component {
             long: isLong,
             fat: isFat
           })}
-          d={this._pointsToPath(this._rotatePoints(this._calculateTickSize(modifiers[0], modifiers[1]), i * this.ticksTheta - this.offsetDegrees))}
+          d={this._pointsToPath(this._rotatePoints(this._calculateTickSize(modifiers[0], modifiers[1]), (i * this.ticksTheta + (this.ticksTheta / 2)) - this.offsetDegrees))}
         />
       );
     });
@@ -107,12 +111,22 @@ export default class Thermostat extends React.Component {
       return <text className='away-mode' x={this.radius} y={this.radius}>AWAY</text>;
     }
 
-    const status = this.props.mode === 'heat-cool' ? 'HEAT • COOL' : this.props.state !== 'off' ? this.props.state : `${this.props.mode} SET TO`;
-    const targetTemperature = this.props.targetTemperature.map(temp => Math.round(temp));
+    let status, targetTemperature;
+    if (this.props.mode === 'heat-cool') {
+      status = 'HEAT • COOL';
+      targetTemperature = this.props.targetTemperature.join(' • ');
+    } else if (this.props.mode === 'heat') {
+      status = `${this.props.mode} SET TO`;
+      targetTemperature = this.props.targetTemperature[0];
+    } else {
+      status = `${this.props.mode} SET TO`;
+      targetTemperature = this.props.targetTemperature[this.props.targetTemperature.length - 1];
+    }
+
     return (
       <g className={cx({ 'heat-cool': this.props.mode === 'heat-cool' })}>
         <text className='target-mode' x={this.radius} y={this.radius - 70}>{status}</text>
-        <text className='target-temperature' x={this.radius} y={this.radius}>{targetTemperature.join(' • ')}</text>
+        <text className='target-temperature' x={this.radius} y={this.radius}>{targetTemperature}</text>
       </g>
     );
   }
