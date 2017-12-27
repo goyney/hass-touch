@@ -43,7 +43,7 @@ export default class ControlPanel extends React.Component {
   }
 
   componentDidMount() {
-    this.menuItems[this.props.activePage].scrollIntoView();
+    this.menuItems[this.props.activePage].scrollIntoView({ behavior: 'smooth' });
   }
 
   shouldComponentUpdate(nextProps, nextState) {

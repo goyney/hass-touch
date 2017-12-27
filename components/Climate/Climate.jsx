@@ -94,7 +94,7 @@ export default class Climate extends React.Component {
 
   _toggleFan = () => {
     const { connection } = this.props;
-    connection.callService('climate', 'set_fan_mode', { fan_mode: this.state.fan === 'on' ? false : true })
+    connection.callService('climate', 'set_fan_mode', { fan_mode: this.state.fan === true ? 'off' : 'on' })
       .then(() => this.setState({ fan: !this.state.fan }));
   }
 
@@ -144,8 +144,8 @@ export default class Climate extends React.Component {
             >
               <i className={cx({
                 mdi: true,
-                'mdi-fan': !this.state.fan,
-                'mdi-fan-off': this.state.fan
+                'mdi-fan': this.state.fan,
+                'mdi-fan-off': !this.state.fan
               })} />
             </button>
           </div>
