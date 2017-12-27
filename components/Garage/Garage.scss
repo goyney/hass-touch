@@ -14,6 +14,7 @@
   margin-right: 80px;
   padding: 25px 50px 50px;
   position: relative;
+  transition: background-color 1s ease;
   width: 300px;
 
   svg {
@@ -35,6 +36,14 @@
       size: 12px;
       weight: 200;
     }
+  }
+
+  &.door-closed {
+    background-color: $green;
+  }
+
+  &.door-open {
+    background-color: $red;
   }
 }
 
