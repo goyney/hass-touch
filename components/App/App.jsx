@@ -103,11 +103,14 @@ export default class App extends React.Component {
 
   render() {
     const PageComponent = pages[this.state.activePage];
-
     return (
-      <div className="touch-container">
+      <div className='touch-container'>
         <Sidebar.Pushable>
-          <Transition in={this.state.hass.lastUpdate === false} timeout={1000} unmountOnExit>
+          <Transition
+            in={this.state.hass.lastUpdate === false}
+            timeout={1000}
+            unmountOnExit
+          >
             {(state) => <Loading className={`fade-${state}`} />}
           </Transition>
           <ControlPanel
@@ -115,7 +118,10 @@ export default class App extends React.Component {
             changePage={this._changePage}
           />
           <Sidebar.Pusher as={Container.fluid} className='information-panel'>
-            <PageComponent connection={this.state.hass.connection} entities={this.state.hass.entities} />
+            <PageComponent
+              connection={this.state.hass.connection}
+              entities={this.state.hass.entities}
+            />
           </Sidebar.Pusher>
         </Sidebar.Pushable>
         <Notifications

@@ -84,7 +84,7 @@ export default class Presence extends React.Component {
 
       return (
         <div key={member}>
-          <div className="presence-icon">
+          <div className='presence-icon'>
             <img src={icon} alt={name} />
           </div>
           <div className="presence-info">

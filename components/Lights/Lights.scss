@@ -1,1 +1,28 @@
 @import '../../style/variables';
+
+.group-container {
+  display: flex;
+  flex-wrap: wrap;
+
+  h2 {
+    background-color: rgba($black, .4);
+    display: flex;
+    font: {
+      size: 14px;
+      weight: 300;
+    }
+    justify-content: space-between;
+    padding: .25rem .5rem;
+  }
+}
+
+.light-group {
+  padding: 1.5rem;
+  width: 50%;
+
+  .switch {
+    display: flex;
+    justify-content: space-between;
+    padding: .25rem .5rem;
+  }
+}

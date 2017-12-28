@@ -1,84 +1,135 @@
 import React from 'react';
-import { Button } from 'semantic-ui-react';
+import idx from 'idx';
+import { Container, Checkbox } from 'semantic-ui-react';
+
+import { sortBy, sortByAttribute } from 'utils/sortBy';
 
 import './Lights.scss';
 
+const monitoredTypes = [ 'switch', 'light', 'fan' ];
+
 export default class Lights extends React.Component {
-  _curateLightGroups(groups) {
+  constructor() {
+    super();
+    this.state = {
+      groups: []
+    };
+  }
+
+  _initializeLightsPanel(props) {
+    this._determineAvailableSwitches(props);
+  }
+
+  _determineLightGroups(props) {
+    const { entities } = props;
+    const groups = idx(entities, _ => _.group) || {};
     const lightGroups = Object.keys(groups).reduce((lightGroups, group) => {
       if (groups[group].attributes.ht_lights === true) {
         lightGroups.push(groups[group]);
       }
       return lightGroups;
     }, []);
-
-    lightGroups.sort((a, b) => {
-      const aName = a.attributes.friendly_name.toUpperCase();
-      const bName = b.attributes.friendly_name.toUpperCase();
-
-      if (aName < bName) {
-        return -1;
-      }
-      if (aName > bName) {
-        return 1;
-      }
-      return 0;
-    });
-
-    return lightGroups;
+    return sortByAttribute(lightGroups, 'friendly_name');
   }
 
-  _generateGroups(groups, switches) {
-    const lightGroups = this._curateLightGroups(groups);
-    const groupsOutput = lightGroups.map(group => {
-      const groupSwitches = group.attributes.entity_id.map(switcher => {
-        const switchSplit = switcher.split('.', 2);
-        if (switches[switchSplit[1]]) {
-          const thisSwitch = switches[switchSplit[1]];
-          return <p key={thisSwitch.entity_id}>{thisSwitch.attributes.friendly_name} | {thisSwitch.state} | <Button onClick={this._toggle(thisSwitch.entity_id)}>Toggle</Button></p>;
-        }
-        return false;
-      });
+  _determineAvailableSwitches(props) {
+    const { entities } = props;
+    const groups = this._determineLightGroups(props);
+    const switches = monitoredTypes.reduce((switches, type) => {
+      switches[type] = idx(entities, _ => _[type]) || {};
+      return switches;
+    }, {});
 
-      // Relationship insurance
-      if (group.entity_id !== 'group.master_bedroom') {
+    const groupsOutput = groups.map(group => {
+      const groupSwitches = group.attributes.entity_id.reduce((output, switcher) => {
+        const switchId = switcher.split('.', 2)[1];
+        return output.concat(Object.keys(switches).reduce((allSwitches, type) => {
+          if (switchId in switches[type]) {
+            allSwitches.push({
+              entity_id: switches[type][switchId].entity_id,
+              name: switches[type][switchId].attributes.friendly_name,
+              state: switches[type][switchId].state,
+              type
+            });
+          }
+          return allSwitches;
+        }, []));
+      }, []);
+      return {
+        entity_id: group.entity_id,
+        name: group.attributes.friendly_name,
+        state: group.state,
+        switches: sortBy(groupSwitches, 'name')
+      };
+    });
+
+    this.setState({
+      groups: groupsOutput
+    });
+  }
+
+  _renderGroups() {
+    const groups = this.state.groups.map(group => {
+      const switches = group.switches.map(switcher => {
         return (
-          <div key={group.entity_id}>
-            <h4>{group.attributes.friendly_name} | {group.state} | <Button onClick={this._toggle(group.entity_id)}>Toggle</Button></h4>
-            {groupSwitches}
+          <div
+            key={switcher.entity_id}
+            className='switch'
+          >
+            {switcher.name}
+            <Checkbox
+              toggle
+              checked={switcher.state === 'on'}
+              onChange={this._toggle(switcher.entity_id)}
+            />
           </div>
         );
-      }
+      });
+
+      return (
+        <div
+          key={group.entity_id}
+          className='light-group'
+        >
+          <h2>
+            {group.name}
+            <Checkbox
+              toggle
+              checked={group.state === 'on'}
+              onChange={this._toggle(group.entity_id)}
+            />
+          </h2>
+          {switches}
+        </div>
+      );
     });
-    return groupsOutput;
+
+    return (
+      <div className='group-container'>{groups}</div>
+    );
   }
 
   _toggle = entity => () => {
     const { connection } = this.props;
     const entitySplit = entity.split('.', 2);
     const domain = entitySplit[0];
+    console.log('Would have switched', entity);
+    // connection.callService(domain, 'toggle', { entity_id: entity });
+  }
 
-    connection.callService(domain, 'toggle', { entity_id: entity })
-      .then(result => console.log('TOGGLED', domain, 'toggle', entity))
-      .catch(err => {
-        // Want to pop up a notifcation if errors ever occur
-        console.error(err);
-      });
+  componentWillReceiveProps(newProps) {
+    this._initializeLightsPanel(newProps);
+  }
+
+  componentDidMount() {
+    this._initializeLightsPanel(this.props);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return JSON.stringify(this.state.groups) !== JSON.stringify(nextState.groups);
   }
 
   render() {
-    const {
-      groups = {},
-      switches = {},
-      lights = {},
-      fans = {}
-    } = this.props;
-
-    return (
-      <div>
-        <h3>Lights</h3>
-        {this._generateGroups(groups, Object.assign(switches, lights, fans))}
-      </div>
-    );
+    return <Container id='lights-panel'>{this._renderGroups()}</Container>;
   }
 }
