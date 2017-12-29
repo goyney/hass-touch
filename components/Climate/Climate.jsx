@@ -102,6 +102,7 @@ export default class Climate extends React.Component {
   }
 
   _updateTemperature = (mode, direction) => {
+    const { connection } = this.props;
     if (this.state.operationMode === 'heat-cool') {
       const heatModifier = mode === 'heat' ? direction === 'up' ? 1 : -1 : 0;
       const coolModifier = mode === 'cool' ? direction === 'up' ? 1 : -1 : 0;
@@ -117,8 +118,8 @@ export default class Climate extends React.Component {
         lastUpdated: Date.now()
       });
       connection.callService('climate', 'set_temperature', {
-        target_temp_high: heatTemp,
-        target_temp_low: coolTemp
+        target_temp_high: coolTemp,
+        target_temp_low: heatTemp
       });
     } else {
       const modifier = direction === 'up' ? 1 : -1;
@@ -147,8 +148,8 @@ export default class Climate extends React.Component {
     this.setState({ operationMode: mode, targetTemperature, lastUpdated: Date.now() });
     connection.callService('climate', 'set_operation_mode', { operation_mode: mode });
     connection.callService('climate', 'set_temperature', {
-      target_temp_high: targetTemperature[0],
-      target_temp_low: targetTemperature[1]
+      target_temp_high: targetTemperature[1],
+      target_temp_low: targetTemperature[0]
     });
   };
 

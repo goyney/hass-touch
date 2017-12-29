@@ -1,5 +1,6 @@
 import React from 'react';
 import idx from 'idx';
+import cx from 'classnames';
 import { Container, Checkbox } from 'semantic-ui-react';
 
 import { sortBy, sortByAttribute } from 'utils/sortBy';
@@ -45,10 +46,13 @@ export default class Lights extends React.Component {
         const switchId = switcher.split('.', 2)[1];
         return Object.assign(output, Object.keys(switches).reduce((allSwitches, type) => {
           if (switchId in switches[type]) {
+            // console.log(switches[type][switchId]);
             allSwitches[switches[type][switchId].entity_id] = {
-              name: switches[type][switchId].attributes.friendly_name,
+              name: switches[type][switchId].attributes.short_name || switches[type][switchId].attributes.friendly_name,
               state: switches[type][switchId].state,
               icon: switches[type][switchId].attributes.icon,
+              speed: switches[type][switchId].attributes.speed || undefined,
+              speedList: switches[type][switchId].attributes.speed_list || undefined,
               type
             };
           }
@@ -78,15 +82,17 @@ export default class Lights extends React.Component {
         return (
           <div
             key={switchId}
-            className='switch'
+            className={cx({
+              switch: true,
+              on: switcher.state === 'on',
+              [switcher.type]: true
+            })}
+            onClick={this._toggle(groupId, switchId)}
           >
-            <i className={`mdi ${switcher.icon.replace(':', '-')}`} />
+            <i className={`mdi ${switcher.icon.replace(':', '-')}`}>
+              {switcher.type === 'fan' && switcher.state === 'on' && <span>{switcher.speed}</span>}
+            </i>
             {switcher.name}
-            <Checkbox
-              toggle
-              checked={switcher.state === 'on'}
-              onChange={this._toggle(groupId, switchId)}
-            />
           </div>
         );
       });
@@ -94,17 +100,17 @@ export default class Lights extends React.Component {
       return (
         <div
           key={groupId}
-          className='light-group'
+          className='light-grouping'
         >
           <h2>
             {group.name}
-            <Checkbox
+            {switches.length > 1 && <Checkbox
               toggle
               checked={group.state === 'on'}
               onChange={this._toggle(groupId)}
-            />
+            />}
           </h2>
-          {switches}
+          <div className='light-group'>{switches}</div>
         </div>
       );
     });
