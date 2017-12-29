@@ -13,11 +13,7 @@ import disarm from './disarm.wav';
 // * Redirection to specific panel only
 // * Pop-up notification only
 
-const soundsDefinition = {
-  beep: `/dist/${beep}`,
-  chime: `/dist/${chime}`,
-  disarm: `/dist/${disarm}`
-};
+const soundsDefinition = { beep, chime, disarm };
 
 export default class Notifications extends React.Component {
   constructor() {

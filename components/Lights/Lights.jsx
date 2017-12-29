@@ -2,6 +2,7 @@ import React from 'react';
 import idx from 'idx';
 import cx from 'classnames';
 import { Container, Checkbox } from 'semantic-ui-react';
+import Hammer from 'react-hammerjs';
 
 import { sortBy, sortByAttribute } from 'utils/sortBy';
 
@@ -80,20 +81,24 @@ export default class Lights extends React.Component {
       const switches = Object.keys(group.switches).map(switchId => {
         const switcher = group.switches[switchId];
         return (
-          <div
+          <Hammer
             key={switchId}
-            className={cx({
-              switch: true,
-              on: switcher.state === 'on',
-              [switcher.type]: true
-            })}
-            onClick={this._toggle(groupId, switchId)}
+            onTap={this._toggle(groupId, switchId)}
+            onPress={() => this._triggerSettings()}
           >
-            <i className={`mdi ${switcher.icon.replace(':', '-')}`}>
-              {switcher.type === 'fan' && switcher.state === 'on' && <span>{switcher.speed}</span>}
-            </i>
-            {switcher.name}
-          </div>
+            <div
+              className={cx({
+                switch: true,
+                on: switcher.state === 'on',
+                [switcher.type]: true
+              })}
+            >
+              <i className={`mdi ${switcher.icon.replace(':', '-')}`}>
+                {switcher.type === 'fan' && switcher.state === 'on' && <span>{switcher.speed}</span>}
+              </i>
+              {switcher.name}
+            </div>
+          </Hammer>
         );
       });
 
@@ -151,6 +156,10 @@ export default class Lights extends React.Component {
     } else {
       console.log('Relationship Insurance Activated');
     }
+  }
+
+  _triggerSettings = () => {
+    console.log('LONG PRESS');
   }
 
   _filterGroupsLastUpdated(groups = {}) {
