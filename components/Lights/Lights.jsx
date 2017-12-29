@@ -48,6 +48,7 @@ export default class Lights extends React.Component {
             allSwitches[switches[type][switchId].entity_id] = {
               name: switches[type][switchId].attributes.friendly_name,
               state: switches[type][switchId].state,
+              icon: switches[type][switchId].attributes.icon,
               type
             };
           }
@@ -79,6 +80,7 @@ export default class Lights extends React.Component {
             key={switchId}
             className='switch'
           >
+            <i className={`mdi ${switcher.icon.replace(':', '-')}`} />
             {switcher.name}
             <Checkbox
               toggle
@@ -116,40 +118,62 @@ export default class Lights extends React.Component {
     const { connection } = this.props;
     const currentGroups = this.state.groups;
 
-    if (switchEntityId) {
-      currentGroups[groupEntityId].switches[switchEntityId].state = currentGroups[groupEntityId].switches[switchEntityId].state === 'on' ? 'off' : 'on';
-      if (currentGroups[groupEntityId].switches[switchEntityId].state === 'on') {
-        currentGroups[groupEntityId].state = 'on';
-      } else {
-        const anyOn = Object.keys(currentGroups[groupEntityId].switches).filter(switchId => currentGroups[groupEntityId].switches[switchId].state === 'on');
-        if (!anyOn.length) {
-          currentGroups[groupEntityId].state = 'off';
+    if (groupEntityId !== 'group.master_bedroom') {
+      if (switchEntityId) {
+        currentGroups[groupEntityId].switches[switchEntityId].state = currentGroups[groupEntityId].switches[switchEntityId].state === 'on' ? 'off' : 'on';
+        if (currentGroups[groupEntityId].switches[switchEntityId].state === 'on') {
+          currentGroups[groupEntityId].state = 'on';
+        } else {
+          const anyOn = Object.keys(currentGroups[groupEntityId].switches).filter(switchId => currentGroups[groupEntityId].switches[switchId].state === 'on');
+          if (!anyOn.length) {
+            currentGroups[groupEntityId].state = 'off';
+          }
         }
+        connection.callService('homeassistant', 'toggle', { entity_id: switchEntityId });
+      } else {
+        currentGroups[groupEntityId].state = currentGroups[groupEntityId].state === 'on' ? 'off' : 'on';
+        Object.keys(currentGroups[groupEntityId].switches).forEach(switchId => {
+          currentGroups[groupEntityId].switches[switchId].state = currentGroups[groupEntityId].state;
+        });
+        connection.callService('homeassistant', 'toggle', { entity_id: groupEntityId });
       }
-      connection.callService('homeassistant', 'toggle', { entity_id: switchEntityId });
-    } else {
-      currentGroups[groupEntityId].state = currentGroups[groupEntityId].state === 'on' ? 'off' : 'on';
-      Object.keys(currentGroups[groupEntityId].switches).forEach(switchId => {
-        currentGroups[groupEntityId].switches[switchId].state = currentGroups[groupEntityId].state;
-      });
-      connection.callService('homeassistant', 'toggle', { entity_id: groupEntityId });
-    }
 
-    this.setState({
-      groups: currentGroups,
-      lastUpdated: Date.now()
-    });
+      this.setState({
+        groups: currentGroups,
+        lastUpdated: Date.now()
+      });
+    } else {
+      console.log('Relationship Insurance Activated');
+    }
+  }
+
+  _filterGroupsLastUpdated(groups = {}) {
+    return JSON.stringify(Object.entries(groups).map(group => {
+      if (group[1].attributes.ht_lights === true) {
+        return group[1].last_updated;
+      }
+    }).filter(e => e !== undefined));
+  }
+
+  _filterSwitchesLastUpdated(switches = {}) {
+    return JSON.stringify(Object.entries(switches).map(sw => sw[1].last_updated).filter(e => e !== undefined));
   }
 
   componentWillReceiveProps(newProps) {
-    this._initializeLightsPanel(newProps);
+    const thisGroups = this._filterGroupsLastUpdated(idx(this.props.entities, _ => _.group));
+    const nextGroups = this._filterGroupsLastUpdated(idx(newProps.entities, _ => _.group));
+    const thisSwitches = monitoredTypes.reduce((switches, type) => {
+      switches[type] = this._filterSwitchesLastUpdated(idx(this.props.entities, _ => _[type]));
+      return switches;
+    }, {});
+    const nextSwitches = monitoredTypes.reduce((switches, type) => {
+      switches[type] = this._filterSwitchesLastUpdated(idx(newProps.entities, _ => _[type]));
+      return switches;
+    }, {});
 
-    // This will be fun
-    // const thisLastUpdated = idx(this.props.entities, _ => _.climate.entryway.last_updated)
-    // const nextLastUpdated = idx(newProps.entities, _ => _.climate.entryway.last_updated);
-    // if (thisLastUpdated !== nextLastUpdated) {
-    //   this._initializeClimatePanel(newProps);
-    // }
+    if (thisGroups !== nextGroups || thisSwitches !== nextSwitches) {
+      this._initializeLightsPanel(newProps);
+    }
   }
 
   componentDidMount() {
