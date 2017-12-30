@@ -21,6 +21,7 @@
     "mdi": "^2.0.46",
     "moment": "^2.19.3",
     "node-sass": "^4.7.2",
+    "npm-font-open-sans": "^1.1.0",
     "parcel-bundler": "^1.0.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",

@@ -17,6 +17,7 @@ import Music from 'Music/Music';
 import Irrigation from 'Irrigation/Irrigation';
 
 import '../../node_modules/mdi/css/materialdesignicons.min.css';
+import '../../node_modules/npm-font-open-sans/open-sans.css';
 import '../../node_modules/semantic-ui-css/semantic.min.css';
 import '../../node_modules/animate.css/animate.min.css';
 import './App.scss';
