@@ -18,23 +18,29 @@ export default class Music extends React.Component {
   }
 
   _initializeMusicPanel() {
-    this._setSpotifyAccessToken();
-    this._getNowPlaying();
+    this._setSpotifyAccessToken()
+      .then(() => {
+        this._getNowPlaying();
+        this._getFeaturedPlaylists();
+        this._getUserPlaylists();
+      });
   }
 
   _setSpotifyAccessToken() {
-    const { entities } = this.props;
-    const accessToken = idx(this.props.entities, _ => _.media_player.spotify.attributes.app_id);
-    if (accessToken) {
-      this.setState({ accessToken });
-      this.spotify.setAccessToken(accessToken);
-    }
+    return new Promise((resolve, reject) => {
+      const { entities } = this.props;
+      const accessToken = idx(this.props.entities, _ => _.media_player.spotify.attributes.app_id);
+      if (accessToken) {
+        this.setState({ accessToken });
+        this.spotify.setAccessToken(accessToken);
+        resolve();
+      }
+    });
   }
 
   _getNowPlaying() {
     const music = idx(this.props.entities, _ => _.media_player.spotify) || { attributes: {} };
     this.setState({
-      lastUpdated: music.last_updated,
       mediaTitle: music.attributes.media_title,
       mediaArtist: music.attributes.media_artist,
       mediaArt: `http${config.hass.ssl ? 's' : ''}://${config.hass.basePath}${music.attributes.entity_picture}`,
@@ -44,6 +50,38 @@ export default class Music extends React.Component {
       source: music.attributes.source,
       sourcesAvailable: music.attributes.source_list
     });
+  }
+
+  _getFeaturedPlaylists() {
+    this.spotify.getFeaturedPlaylists({ country: 'US' })
+      .then(data => {
+        this.setState({
+          featuredPlaylists: data
+        });
+      })
+      .catch(error => {
+        this.setState({
+          featuredPlaylists: new Error(error)
+        });
+      });
+  }
+
+  _getUserPlaylists() {
+    this.spotify.getUserPlaylists()
+      .then(data => {
+        this.setState({
+          userPlaylists: data
+        });
+      })
+      .catch(error => {
+        this.setState({
+          userPlaylists: new Error(error)
+        });
+      });
+  }
+
+  _playPlaylist = playlistUri => {
+    this.spotify.play({ context_uri: playlistUri });
   }
 
   _playPause = () => {
@@ -70,11 +108,31 @@ export default class Music extends React.Component {
     // connection.callService('media_player', 'shuffle_set', { shuffle: !this.props.entities.media_player.spotify.attributes.shuffle});
 
 
-    this.spotify.getArtistAlbums('43ZHCT0cAZBISjO8DG9PnE', function(err, data) {
-      if (err) console.error(err);
-      else console.log('Artist albums', data);
-    });
+    // this.spotify.getArtistAlbums('43ZHCT0cAZBISjO8DG9PnE', function(err, data) {
+    //   if (err) console.error(err);
+    //   else console.log('Artist albums', data);
+    // });
+    console.log(this.state);
+  }
 
+  _renderPlaylists(playlists) {
+    const pl = playlists.items.reduce((pl, list) => {
+      pl.push(
+        <div
+          className='playlist'
+          key={list.id}
+          onClick={() => this._playPlaylist(list.uri)}
+        >
+          <img src={list.images[0].url} alt={list.name} />
+          <h4>{list.name}</h4>
+        </div>
+      );
+      return pl;
+    }, []);
+
+    return (
+      <div>{pl}</div>
+    );
   }
 
   componentWillReceiveProps(newProps) {
@@ -86,7 +144,7 @@ export default class Music extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.lastUpdated !== nextState.lastUpdated || this.state.accessToken !== nextState.accessToken || this.state.searchTerm !== nextState.searchTerm;
+    return JSON.stringify(this.state) !== JSON.stringify(nextState);
   }
 
   render() {
@@ -97,6 +155,20 @@ export default class Music extends React.Component {
             type='text'
             placeholder='Search'
           />
+        </div>
+        <div className='featured-playlists'>
+          { this.state.featuredPlaylists && typeof this.state.featuredPlaylists !== 'Error' &&
+            <div className='spotify-featured'>
+              <h3>{this.state.featuredPlaylists.message}</h3>
+              {this._renderPlaylists(this.state.featuredPlaylists.playlists)}
+            </div>
+          }
+          { this.state.userPlaylists && typeof this.state.userPlaylists !== 'Error' &&
+            <div className='user-playlists'>
+              <h3>Your playlists</h3>
+              {this._renderPlaylists(this.state.userPlaylists)}
+            </div>
+          }
         </div>
         <div className='control-bar'>
           <div className='now-playing'>
