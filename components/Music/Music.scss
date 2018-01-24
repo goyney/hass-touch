@@ -62,5 +62,27 @@
 }
 
 .search-bar {
+  background-color: $white;
+  border-radius: 20px;
+  margin: 1.5rem 2rem 1rem;
+  padding: 3px 4px 4px;
 
+  &::before {
+    color: $black;
+    content: "\F349";
+    font: {
+      family: "Material Design Icons";
+      size: 20px;
+    }
+    left: 2px;
+    position: relative;
+    top: 2px;
+  }
+
+  input {
+    border: 0;
+    margin-left: 5px;
+    outline: 0;
+    width: 95%;
+  }
 }

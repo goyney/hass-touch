@@ -93,6 +93,10 @@ export default class Music extends React.Component {
     return (
       <Container id='music-panel'>
         <div className='search-bar'>
+          <input
+            type='text'
+            placeholder='Search'
+          />
         </div>
         <div className='control-bar'>
           <div className='now-playing'>
