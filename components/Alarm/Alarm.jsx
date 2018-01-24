@@ -191,7 +191,7 @@ export default class Alarm extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.status !== nextState.status || this.state.chime !== nextState.chime;
+    return JSON.stringify(this.state) !== JSON.stringify(nextState);
   }
 
   render() {
