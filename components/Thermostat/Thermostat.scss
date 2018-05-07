@@ -1,4 +1,4 @@
-@import '../../style/variables';
+@import 'style/variables';
 
 .thermostat {
   user-select: none;
@@ -42,7 +42,8 @@
     path {
       fill: rgba($white, .3);
 
-      &.active, &.fat {
+      &.active,
+      &.fat {
         fill: rgba($white, .7);
       }
 
@@ -85,7 +86,8 @@
     font-size: 120px;
   }
 
-  .fan, .leaf {
+  .fan,
+  .leaf {
     opacity: 0;
     pointer-events: none;
     transition: opacity 1s ease-in;
@@ -110,6 +112,7 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }

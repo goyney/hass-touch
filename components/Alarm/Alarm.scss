@@ -1,4 +1,4 @@
-@import '../../style/variables';
+@import 'style/variables';
 
 #alarm-panel {
   header {
@@ -7,11 +7,11 @@
   }
 
   .system-status {
-    transition: color 250ms linear;
     font: {
       size: 32px;
       weight: 500;
     }
+    transition: color 250ms linear;
   }
 
   .input-status {

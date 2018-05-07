@@ -1,4 +1,4 @@
-@import '../../style/variables';
+@import 'style/variables';
 
 #climate-panel {
   align-items: center;
@@ -84,8 +84,10 @@
   height: 80px;
   width: 100px;
 
-  .dropdown.icon {
-    display: none;
+  .dropdown {
+    .icon {
+      display: none;
+    }
   }
 
   & > .text {

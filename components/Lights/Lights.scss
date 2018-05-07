@@ -1,4 +1,4 @@
-@import '../../style/variables';
+@import 'style/variables';
 
 #lights-panel {
   align-items: center;
@@ -34,7 +34,7 @@
 }
 
 .light-grouping {
-  margin: 1rem .6rem 0 .6rem;
+  margin: 1rem .6rem 0;
 
   .light-group {
     display: flex;

@@ -1,4 +1,4 @@
-@import '../../style/variables';
+@import 'style/variables';
 
 .presence-container {
   display: flex;
@@ -27,7 +27,8 @@
     }
   }
 
-  .presence-name, .presence-state {
+  .presence-name,
+  .presence-state {
     font-weight: 600;
   }
 

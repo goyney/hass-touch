@@ -14,4 +14,4 @@ export default (datetime) => {
     const howLongDays = Math.floor((howLongMins / 60) / 24);
     return `For ${howLongDays} day${howLongDays > 1 ? 's' : ''}`;
   }
-}
+};
