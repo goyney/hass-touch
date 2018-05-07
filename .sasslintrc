@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "no-color-literals": [
+      2,
+      {
+        "allow-rgba": true
+      }
+    ]
+  }
+}

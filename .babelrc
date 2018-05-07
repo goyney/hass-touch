@@ -1,5 +1,9 @@
 {
-  "presets": ["react-app", "stage-3"],
+  "presets": [
+    "env",
+    "react",
+    "stage-3"
+  ],
   "plugins": [
     [
       "module-resolver", {
@@ -13,6 +17,7 @@
           "style": "./style"
         }
       }
-    ]
+    ],
+    "transform-class-properties"
   ]
 }
