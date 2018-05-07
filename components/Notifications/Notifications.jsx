@@ -1,6 +1,7 @@
 import React from 'react';
-import Sound from 'react-sound';
 import idx from 'idx';
+import Sound from 'react-sound';
+soundManager.setup({ debugMode: false });
 
 import beep from './quick-beep.wav';
 import chime from './chime.wav';
